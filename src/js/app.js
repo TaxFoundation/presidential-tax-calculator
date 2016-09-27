@@ -160,16 +160,43 @@ var currentTaxes = {
 }
 
 var taxCalculator = {
-  federalTaxableIncome: function (income1, income2, children, status, taxLaw) {
+  getFederalTaxableIncome: function (income1, income2, children, status, taxLaw, stateIncomeTax) {
     var income = income1 + income2;
-    var personalExemption = taxLaw.personalExemption;
+    var exemption = 0;
     var deduction = 0;
+    var taxableIncome = 0;
 
     if (income > taxLaw.pepPease.threshold[status]) {
-      personalExemption = Math.max(
-        0,
-        (1 - Math.ceil(income - taxLaw.pepPease.threshold[status] / 2500) * taxLaw.pepPease.phaseoutRate)
-        * (taxLaw.personalExemption * (1 + children))
+      exemption = Math.max(
+        0, (
+          1
+          - Math.ceil(income - taxLaw.pepPease.threshold[status] / 2500)
+          * taxLaw.pepPease.phaseoutRate
+        ) * (
+          taxLaw.personalExemption * (1 + children + (status == 'married' ? 1 : 0))
+        )
+      );
+    } else {
+      exemption = taxLaw.personalExemption 
+      * (1 + children + (status == 'married' ? 1 : 0));
     }
+
+    if (stateIncomeTax > taxLaw.standardDeuction[status]) {
+      if (income > taxLaw.pepPease.threshold[status]) {
+        deduction = stateIncomeTax - (income - taxLaw.pepPease.threshold[status]) * .02;
+      } else {
+        deduction = stateIncomeTax;
+      }
+    } else {
+      deduction = taxLaw.standardDeuction[status];
+    }
+
+    taxableIncome = Math.max(0, income - deduction - exemption);
+
+    return taxableIncome;
+  },
+
+  getFederalIncomeTax: function (taxableIncome, status) {
+    
   }
 }
