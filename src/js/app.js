@@ -169,8 +169,7 @@ var taxCalculator = {
     if (income > taxLaw.pepPease.threshold[status]) {
       exemption = Math.max(
         0, (
-          1
-          - Math.ceil(income - taxLaw.pepPease.threshold[status] / 2500)
+          1 - Math.ceil(income - taxLaw.pepPease.threshold[status] / 2500)
           * taxLaw.pepPease.phaseoutRate
         ) * (
           taxLaw.personalExemption * (1 + children + (status == 'married' ? 1 : 0))
@@ -196,7 +195,21 @@ var taxCalculator = {
     return taxableIncome;
   },
 
-  getFederalIncomeTax: function (taxableIncome, status) {
-    
+  getFederalIncomeTax: function (taxableIncome, status, taxLaw) {
+    var income = taxableIncome;
+    var federalIncomeTax = 0;
+
+    // Loop through brackets backward for ease of calculation
+    for (var i = taxLaw.brackets.length - 1, j = -1; i > j; i--) {
+      if (income > taxLaw.brackets[i][status]) {
+        console.log(income, taxLaw.brackets[i][status], taxLaw.brackets[i].rate);
+        federalIncomeTax = federalIncomeTax
+          + (income - taxLaw.brackets[i][status])
+          * taxLaw.brackets[i].rate;
+        income = taxLaw.brackets[i][status];
+      }
+    }
+
+    return federalIncomeTax;
   }
 }
