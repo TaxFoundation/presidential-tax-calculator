@@ -49,44 +49,56 @@ var currentTaxes = {
       hoh: 439000
     },
   ],
-  eitc: [
-    {
-      children: 0,
+  eitc: {
+    0: {
       max: 503,
       threshold: 6580,
-      phaseoutSingle: 8240,
-      phaseoutMarried: 13760,
-      maxIncomeSingle: 14820,
-      maxIncomeMarried: 20330
+      phaseout: {
+        single: 8240,
+        married: 13760,
+      },
+      maxIncome: {
+        single: 14820,
+        married: 20330,
+      }
     },
-    {
-      children: 1,
+    1: {
       max: 3359,
       threshold: 9880,
-      phaseoutSingle: 18110,
-      phaseoutMarried: 23630,
-      maxIncomeSingle: 39131,
-      maxIncomeMarried: 44651,
+      phaseout: {
+        single: 18110,
+        married: 23630,
+      },
+      maxIncome: {
+        single: 39131,
+        married: 44651,
+      }
     },
-    {
-      children: 2,
+    2: {
       max: 5548,
       threshold: 13870,
-      phaseoutSingle: 18110,
-      phaseoutMarried: 23630,
-      maxIncomeSingle: 44454,
-      maxIncomeMarried: 49974
+      phaseout: {
+        single: 18110,
+        married: 23630,
+      },
+      maxIncome: {
+        single: 44454,
+        married: 49974,
+      }
     },
-    {
-      children: 3,
+    3: {
       max: 6242,
       threshold: 13870,
-      phaseoutSingle: 18110,
-      phaseoutMarried: 23630,
-      maxIncomeSingle: 47747,
-      maxIncomeMarried: 53267
+      phaseout: {
+        single: 18110,
+        married: 23630,
+      },
+      maxIncome: {
+        single: 47747,
+        married: 53267,
+      }
     }
-  ],
+  },
   employeePayroll: [
     {
       rate: .0765,
@@ -125,8 +137,10 @@ var currentTaxes = {
     credit: 1000,
     phaseIn: 3000,
     phaseInRate: .15,
-    phaseoutSingle: 75000,
-    phaseoutMarried: 110000,
+    phaseout: {
+      single: 75000,
+      married: 110000
+    },
     phaseoutRate: .05
   },
   pepPease: {
@@ -160,6 +174,10 @@ var currentTaxes = {
 }
 
 var taxCalculator = {
+  roundToHundredths: function (number) {
+    return Math.round(number * 100) / 100;
+  },
+
   getFederalTaxableIncome: function (income1, income2, children, status, taxLaw, stateIncomeTax) {
     var income = income1 + income2;
     var exemption = 0;
@@ -192,7 +210,7 @@ var taxCalculator = {
 
     taxableIncome = Math.max(0, income - deduction - exemption);
 
-    return taxableIncome;
+    return taxCalculator.roundToHundredths(taxableIncome);
   },
 
   getFederalIncomeTax: function (taxableIncome, status, taxLaw) {
@@ -202,14 +220,101 @@ var taxCalculator = {
     // Loop through brackets backward for ease of calculation
     for (var i = taxLaw.brackets.length - 1, j = -1; i > j; i--) {
       if (income > taxLaw.brackets[i][status]) {
-        console.log(income, taxLaw.brackets[i][status], taxLaw.brackets[i].rate);
         federalIncomeTax = federalIncomeTax
-          + (income - taxLaw.brackets[i][status])
-          * taxLaw.brackets[i].rate;
+          + ((income - taxLaw.brackets[i][status]) * taxLaw.brackets[i].rate);
         income = taxLaw.brackets[i][status];
       }
     }
 
-    return federalIncomeTax;
+    return taxCalculator.roundToHundredths(federalIncomeTax);
+  },
+
+  // TODO Adjust to accomodate hoh status
+
+  getFederalEITC: function (income1, income2, children, status, taxLaw) {
+    var income = income1 + income2;
+    var dependents = Math.min(3, children);
+    var theEITC = taxLaw.eitc[dependents];
+    var earnedIncomeTaxCredit = 0;
+
+
+    if (income < theEITC.threshold) {
+      earnedIncomeTaxCredit = income 
+        * (theEITC.maxIncome[status] / theEITC.threshold);
+    } else if (income >= theEITC.threshold && income <= theEITC.phaseout[status]) {
+      earnedIncomeTaxCredit = theEITC.maxIncome[status]
+    } else if (income > theEITC.phaseout[status]) {
+      earnedIncomeTaxCredit = Math.max(
+        0,
+        theEITC.max + (
+          (theEITC.phaseout[status] - income)
+          * (theEITC.max / (theEITC.maxIncome[status] - theEITC.phaseout[status]))
+        )
+      );
+    }
+
+    return earnedIncomeTaxCredit;
+  },
+
+  getFederalChildTaxCredit: function (income1, income2, children, status, taxLaw) {
+    var income = income1 + income2;
+    var childTaxCredit = 0;
+
+    if (children > 0) {
+      if (income <= taxLaw.ctc.phaseIn) {
+        childTaxCredit = 0;
+      } else if (income <= taxLaw.ctc.phaseout[status]) {
+        childTaxCredit = Math.min(
+          taxLaw.ctc.credit * children, (income - taxLaw.ctc.phaseIn) * taxLaw.ctc.phaseInRate
+        );
+      } else if (income > taxLaw.ctc.phaseout[status]) {
+        childTaxCredit = Math.max(
+          0,
+          (taxLaw.ctc.credit * children)
+          - (Math.ceil((income - taxLaw.ctc.phaseout[status]) * .001) * 1000) * taxLaw.ctc.phaseoutRate
+        );
+      }
+    }
+
+    return childTaxCredit;
+  },
+
+  getFederalEmployeePayrollTax: function (indIncome, taxLaw) {
+    var income = indIncome;
+    var employeePayrollTax = 0;
+
+    for (var i = taxLaw.employeePayroll.length - 1, j = -1; i > j; i--) {
+      if (income > taxLaw.employeePayroll[i].income) {
+        employeePayrollTax = employeePayrollTax
+          + ((income - taxLaw.employeePayroll[i].income) * taxLaw.employeePayroll[i].rate);
+        income = taxLaw.employeePayroll[i].income;
+      }
+    }
+
+    return employeePayrollTax;
+  },
+
+  getFederalEmployerPayrollTax: function (indIncome, taxLaw) {
+    var income = indIncome;
+    var employerPayrollTax = 0;
+
+    for (var i = taxLaw.employerPayroll.length - 1, j = -1; i > j; i--) {
+      if (income > taxLaw.employerPayroll[i].income) {
+        employerPayrollTax = employerPayrollTax
+          + ((income - taxLaw.employerPayroll[i].income) * taxLaw.employerPayroll[i].rate);
+        income = taxLaw.employerPayroll[i].income;
+      }
+    }
+
+    return employerPayrollTax;
+  },
+
+  getMedicareSurtax: function (income1, income2, status, taxLaw) {
+    var income = income1 + income2;
+    var medicareSurtax = 0;
+
+
+
+    return medicareSurtax;
   }
 }
