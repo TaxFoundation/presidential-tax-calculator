@@ -253,7 +253,7 @@ var taxCalculator = {
       );
     }
 
-    return earnedIncomeTaxCredit;
+    return taxCalculator.roundToHundredths(earnedIncomeTaxCredit);
   },
 
   getFederalChildTaxCredit: function (income1, income2, children, status, taxLaw) {
@@ -276,7 +276,7 @@ var taxCalculator = {
       }
     }
 
-    return childTaxCredit;
+    return taxCalculator.roundToHundredths(childTaxCredit);
   },
 
   getFederalEmployeePayrollTax: function (indIncome, taxLaw) {
@@ -291,7 +291,7 @@ var taxCalculator = {
       }
     }
 
-    return employeePayrollTax;
+    return taxCalculator.roundToHundredths(employeePayrollTax);
   },
 
   getFederalEmployerPayrollTax: function (indIncome, taxLaw) {
@@ -306,7 +306,7 @@ var taxCalculator = {
       }
     }
 
-    return employerPayrollTax;
+    return taxCalculator.roundToHundredths(employerPayrollTax);
   },
 
   getMedicareSurtax: function (income1, income2, status, taxLaw) {
@@ -315,6 +315,6 @@ var taxCalculator = {
 
 
 
-    return medicareSurtax;
+    return taxCalculator.roundToHundredths(medicareSurtax);
   }
 }
