@@ -23,15 +23,21 @@ var app = {
       var row = document.createElement('tr');
       row.id = app.tableRows[i].id;
       document.getElementById('tax-results-body').appendChild(row);
+      var label = document.createElement('td');
+      label.innerHTML = app.tableRows[i].name;
+      document.getElementById(app.tableRows[i].id).appendChild(label);
 
       for (var m = 0, n = app.laws.length; m < n; m++) {
         cell = document.createElement('td');
-        cell.id = app.laws[m].id + '-' + app.tableRows[i].id;
+        var cellId = app.laws[m].id + '-' + app.tableRows[i].id;
+        cell.id = cellId;
         document.getElementById(app.tableRows[i].id).appendChild(cell);
+
+        this[cellId] = document.getElementById(cellId);
       }
     }
 
-    app.setEventListeners();
+    // app.setEventListeners();
     app.calculate();
   },
 
@@ -53,7 +59,35 @@ var app = {
   },
 
   calculate: function () {
+    var income1 = isNaN(parseInt(app.income1.value)) ? 0 : parseInt(app.income1.value);
+    var income2 = isNaN(parseInt(app.income2.value)) ? 0 : parseInt(app.income2.value);
+    var children = isNaN(parseInt(app.children.value)) ? 0 : parseInt(app.children.value);
+    var status = app.getStatus(children, app.married.checked);
 
+    for (var plan = 0, j = app.laws.length; plan < j; plan++) {
+      var federalTaxableIncome = taxCalculator.getFederalTaxableIncome(income1, income2, children, status, app.laws[plan], 0);
+      var federalIncomeTax = taxCalculator.getFederalIncomeTax(federalTaxableIncome, status, app.laws[plan]);
+      var childTaxCredit = taxCalculator.getFederalChildTaxCredit(income1, income2, children, status, app.laws[plan]);
+      var eitc = taxCalculator.getFederalEITC(income1, income2, children, status, app.laws[plan]);
+      var federalIncomeTaxAfterCredits = federalIncomeTax - childTaxCredit - eitc;
+      var employeePayrollTax = taxCalculator.getFederalEmployeePayrollTax(income1, app.laws[plan])
+        + taxCalculator.getFederalEmployeePayrollTax(income2, app.laws[plan]);
+      var taxBurden = federalIncomeTaxAfterCredits + employeePayrollTax;
+      var employerPayrollTax = taxCalculator.getFederalEmployerPayrollTax(income1, app.laws[plan])
+        + taxCalculator.getFederalEmployerPayrollTax(income2, app.laws[plan]);
+      var taxWedge = taxBurden + employerPayrollTax;
+
+      document.getElementById(app.laws[plan].id + '-taxable-income').innerHTML = federalTaxableIncome;
+      document.getElementById(app.laws[plan].id + '-federal-income-tax').innerHTML = federalIncomeTax;
+      document.getElementById(app.laws[plan].id + '-ctc').innerHTML = childTaxCredit;
+      document.getElementById(app.laws[plan].id + '-eitc').innerHTML = eitc;
+      document.getElementById(app.laws[plan].id + '-federal-income-tax-after-credits').innerHTML
+        = federalIncomeTaxAfterCredits;
+      document.getElementById(app.laws[plan].id + '-employee-payroll-tax').innerHTML = employeePayrollTax;
+      document.getElementById(app.laws[plan].id + '-tax-burden').innerHTML = taxBurden;
+      document.getElementById(app.laws[plan].id + '-employer-payroll-tax').innerHTML = employerPayrollTax;
+      document.getElementById(app.laws[plan].id + '-tax-wedge').innerHTML = taxWedge;
+    }
   }
 }
 
@@ -70,12 +104,10 @@ var taxCalculator = {
 
     if (income > taxLaw.pepPease.threshold[status]) {
       exemption = Math.max(
-        0, (
-          1 - Math.ceil(income - taxLaw.pepPease.threshold[status] / 2500)
-          * taxLaw.pepPease.phaseoutRate
-        ) * (
-          taxLaw.persnoalExemption * (1 + children + (status == 'married' ? 1 : 0))
-        )
+        0,
+        (1 - Math.ceil(income - taxLaw.pepPease.threshold[status] / 2500)
+          * taxLaw.pepPease.phaseoutRate)
+        * (taxLaw.personalExemption * (1 + children + (status == 'married' ? 1 : 0)))
       );
     } else {
       exemption = taxLaw.personalExemption 
