@@ -1,3 +1,62 @@
+var app = {
+  init: function () {
+    this.income1 = document.getElementById('income1');
+    this.income2 = document.getElementById('income2');
+    this.children = document.getElementById('children');
+    this.married = document.getElementById('married');
+
+    this.tableRows = [
+      { name: 'Taxable Income', id: 'taxable-income' },
+      { name: 'Federal Income Tax', id: 'federal-income-tax' },
+      { name: 'Child Tax Credit', id: 'ctc' },
+      { name: 'EITC', id: 'eitc' },
+      { name: 'Federal Income Tax After Credits', id: 'federal-income-tax-after-credits' },
+      { name: 'Employee Payroll Tax', id: 'employee-payroll-tax' },
+      { name: 'Tax Burden', id: 'tax-burden' },
+      { name: 'Employer Payroll Tax', id: 'employer-payroll-tax' },
+      { name: 'Tax Wedge', id: 'tax-wedge' },
+    ];
+
+    this.laws = taxLaws;
+
+    for (var i = 0, j = app.tableRows.length; i < j; i++) {
+      var row = document.createElement('tr');
+      row.id = app.tableRows[i].id;
+      document.getElementById('tax-results-body').appendChild(row);
+
+      for (var m = 0, n = app.laws.length; m < n; m++) {
+        cell = document.createElement('td');
+        cell.id = app.laws[m].id + '-' + app.tableRows[i].id;
+        document.getElementById(app.tableRows[i].id).appendChild(cell);
+      }
+    }
+
+    app.setEventListeners();
+    app.calculate();
+  },
+
+  getStatus: function (children, married) {
+    if (married) {
+      return 'married';
+    } else if (children > 0) {
+      return 'hoh';
+    } else {
+      return 'single';
+    }
+  },
+
+  setEventListeners: function () {
+    app.income1.addEventListener('change', app.calculate());
+    app.income2.addEventListener('change', app.calculate());
+    app.children.addEventListener('change', app.calculate());
+    app.married.addEventListener('change', app.calculate());
+  },
+
+  calculate: function () {
+
+  }
+}
+
 var taxCalculator = {
   roundToHundredths: function (number) {
     return Math.round(number * 100) / 100;
@@ -170,525 +229,536 @@ var taxCalculator = {
   }
 }
 
-var currentTaxes = {
-  standardDeuction: {
-    single: 6300,
-    married: 12600,
-    hoh: 9250,
-  },
-  personalExemption: 4000,
-  brackets: [
-    {
-      rate: .1,
-      single: 0,
-      married: 0,
-      hoh: 0
+var taxLaws = [
+  {
+    name: 'Current Law',
+    id: 'current',
+    standardDeuction: {
+      single: 6300,
+      married: 12600,
+      hoh: 9250,
     },
-    {
-      rate: .15,
-      single: 9225,
-      married: 18450,
-      hoh: 13150
-    },
-    {
-      rate: .25,
-      single: 37450,
-      married: 74900,
-      hoh: 50200
-    },
-    {
-      rate: .28,
-      single: 90750,
-      married: 151200,
-      hoh: 129600
-    },
-    {
-      rate: .33,
-      single: 189300,
-      married: 230450,
-      hoh: 209850
-    },
-    {
-      rate: .35,
-      single: 411500,
-      married: 411500,
-      hoh: 411500
-    },
-    {
-      rate: .396,
-      single: 413200,
-      married: 464850,
-      hoh: 439000
-    },
-  ],
-  eitc: {
-    0: {
-      max: 503,
-      threshold: 6580,
-      phaseout: {
-        single: 8240,
-        married: 13760,
-      },
-      maxIncome: {
-        single: 14820,
-        married: 20330,
-      }
-    },
-    1: {
-      max: 3359,
-      threshold: 9880,
-      phaseout: {
-        single: 18110,
-        married: 23630,
-      },
-      maxIncome: {
-        single: 39131,
-        married: 44651,
-      }
-    },
-    2: {
-      max: 5548,
-      threshold: 13870,
-      phaseout: {
-        single: 18110,
-        married: 23630,
-      },
-      maxIncome: {
-        single: 44454,
-        married: 49974,
-      }
-    },
-    3: {
-      max: 6242,
-      threshold: 13870,
-      phaseout: {
-        single: 18110,
-        married: 23630,
-      },
-      maxIncome: {
-        single: 47747,
-        married: 53267,
-      }
-    }
-  },
-  employeePayroll: [
-    {
-      rate: .0765,
-      income: 0
-    },
-    {
-      rate: .0145,
-      income: 118500
-    }
-  ],
-  employerPayroll: [
-    {
-      rate: .0765,
-      income: 0
-    },
-    {
-      rate: .0145,
-      income: 118500
-    }
-  ],
-  medicareSurtax: {
-    single: [
-      {
-        rate: 0,
-        income: 0
-      },
-      {
-        rate: .009,
-        income: 200000
-      }
-    ],
-    married: [
-      {
-        rate: 0,
-        income: 0
-      },
-      {
-        rate: .009,
-        income: 250000
-      }
-    ]
-  },
-  unemploymentInsurance: {
-    rate: .06,
-    income: 7000
-  },
-  ctc: {
-    credit: 1000,
-    phaseIn: 3000,
-    phaseInRate: .15,
-    phaseout: {
-      single: 75000,
-      married: 110000
-    },
-    phaseoutRate: .05
-  },
-  pepPease: {
-    threshold: {
-      single: 258250,
-      married: 309900,
-      hoh: 284050
-    },
-    phaseoutRate: .02
-  },
-  amt: {
+    personalExemption: 4000,
     brackets: [
       {
-        rate: .26,
-        income: 0
+        rate: .1,
+        single: 0,
+        married: 0,
+        hoh: 0
+      },
+      {
+        rate: .15,
+        single: 9225,
+        married: 18450,
+        hoh: 13150
+      },
+      {
+        rate: .25,
+        single: 37450,
+        married: 74900,
+        hoh: 50200
       },
       {
         rate: .28,
-        income: 185400
-      }
-    ],
-    single: {
-      exemption: 53600,
-      phaseout: 119200
-    },
-    married: {
-      exemption: 83400,
-      phaseout: 158900
-    }
-  }
-}
-
-var clintonTaxes = {
-  standardDeuction: {
-    single: 6300,
-    married: 12600,
-    hoh: 9250,
-  },
-  personalExemption: 4000,
-  brackets: [
-    {
-      rate: .1,
-      single: 0,
-      married: 0,
-      hoh: 0
-    },
-    {
-      rate: .15,
-      single: 9225,
-      married: 18450,
-      hoh: 13150
-    },
-    {
-      rate: .25,
-      single: 37450,
-      married: 74900,
-      hoh: 50200
-    },
-    {
-      rate: .28,
-      single: 90750,
-      married: 151200,
-      hoh: 129600
-    },
-    {
-      rate: .33,
-      single: 189300,
-      married: 230450,
-      hoh: 209850
-    },
-    {
-      rate: .35,
-      single: 411500,
-      married: 411500,
-      hoh: 411500
-    },
-    {
-      rate: .396,
-      single: 413200,
-      married: 464850,
-      hoh: 439000
-    },
-    {
-      rate: .436,
-      single: 5000000,
-      married: 5000000,
-      hoh: 5000000
-    }
-  ],
-  eitc: {
-    0: {
-      max: 503,
-      threshold: 6580,
-      phaseout: {
-        single: 8240,
-        married: 13760,
+        single: 90750,
+        married: 151200,
+        hoh: 129600
       },
-      maxIncome: {
-        single: 14820,
-        married: 20330,
-      }
-    },
-    1: {
-      max: 3359,
-      threshold: 9880,
-      phaseout: {
-        single: 18110,
-        married: 23630,
-      },
-      maxIncome: {
-        single: 39131,
-        married: 44651,
-      }
-    },
-    2: {
-      max: 5548,
-      threshold: 13870,
-      phaseout: {
-        single: 18110,
-        married: 23630,
-      },
-      maxIncome: {
-        single: 44454,
-        married: 49974,
-      }
-    },
-    3: {
-      max: 6242,
-      threshold: 13870,
-      phaseout: {
-        single: 18110,
-        married: 23630,
-      },
-      maxIncome: {
-        single: 47747,
-        married: 53267,
-      }
-    }
-  },
-  employeePayroll: [
-    {
-      rate: .0765,
-      income: 0
-    },
-    {
-      rate: .0145,
-      income: 118500
-    }
-  ],
-  employerPayroll: [
-    {
-      rate: .0765,
-      income: 0
-    },
-    {
-      rate: .0145,
-      income: 118500
-    }
-  ],
-  medicareSurtax: {
-    single: [
       {
-        rate: 0,
+        rate: .33,
+        single: 189300,
+        married: 230450,
+        hoh: 209850
+      },
+      {
+        rate: .35,
+        single: 411500,
+        married: 411500,
+        hoh: 411500
+      },
+      {
+        rate: .396,
+        single: 413200,
+        married: 464850,
+        hoh: 439000
+      },
+    ],
+    eitc: {
+      0: {
+        max: 503,
+        threshold: 6580,
+        phaseout: {
+          single: 8240,
+          married: 13760,
+        },
+        maxIncome: {
+          single: 14820,
+          married: 20330,
+        }
+      },
+      1: {
+        max: 3359,
+        threshold: 9880,
+        phaseout: {
+          single: 18110,
+          married: 23630,
+        },
+        maxIncome: {
+          single: 39131,
+          married: 44651,
+        }
+      },
+      2: {
+        max: 5548,
+        threshold: 13870,
+        phaseout: {
+          single: 18110,
+          married: 23630,
+        },
+        maxIncome: {
+          single: 44454,
+          married: 49974,
+        }
+      },
+      3: {
+        max: 6242,
+        threshold: 13870,
+        phaseout: {
+          single: 18110,
+          married: 23630,
+        },
+        maxIncome: {
+          single: 47747,
+          married: 53267,
+        }
+      }
+    },
+    employeePayroll: [
+      {
+        rate: .0765,
         income: 0
       },
       {
-        rate: .009,
-        income: 200000
+        rate: .0145,
+        income: 118500
       }
     ],
-    married: [
+    employerPayroll: [
       {
-        rate: 0,
+        rate: .0765,
         income: 0
       },
       {
-        rate: .009,
-        income: 250000
+        rate: .0145,
+        income: 118500
       }
-    ]
-  },
-  unemploymentInsurance: {
-    rate: .06,
-    income: 7000
-  },
-  ctc: {
-    credit: 1000,
-    phaseIn: 3000,
-    phaseInRate: .15,
-    phaseout: {
-      single: 75000,
-      married: 110000
+    ],
+    medicareSurtax: {
+      single: [
+        {
+          rate: 0,
+          income: 0
+        },
+        {
+          rate: .009,
+          income: 200000
+        }
+      ],
+      married: [
+        {
+          rate: 0,
+          income: 0
+        },
+        {
+          rate: .009,
+          income: 250000
+        }
+      ]
     },
-    phaseoutRate: .05
-  },
-  pepPease: {
-    threshold: {
-      single: 258250,
-      married: 309900,
-      hoh: 284050
+    unemploymentInsurance: {
+      rate: .06,
+      income: 7000
     },
-    phaseoutRate: .02
+    ctc: {
+      credit: 1000,
+      phaseIn: 3000,
+      phaseInRate: .15,
+      phaseout: {
+        single: 75000,
+        married: 110000
+      },
+      phaseoutRate: .05
+    },
+    pepPease: {
+      threshold: {
+        single: 258250,
+        married: 309900,
+        hoh: 284050
+      },
+      phaseoutRate: .02
+    },
+    amt: {
+      brackets: [
+        {
+          rate: .26,
+          income: 0
+        },
+        {
+          rate: .28,
+          income: 185400
+        }
+      ],
+      single: {
+        exemption: 53600,
+        phaseout: 119200
+      },
+      married: {
+        exemption: 83400,
+        phaseout: 158900
+      }
+    }
   },
-  amt: {
+  {
+    name: 'Clinton Plan',
+    id: 'clinton',
+    standardDeuction: {
+      single: 6300,
+      married: 12600,
+      hoh: 9250,
+    },
+    personalExemption: 4000,
     brackets: [
       {
-        rate: .26,
-        income: 0
+        rate: .1,
+        single: 0,
+        married: 0,
+        hoh: 0
+      },
+      {
+        rate: .15,
+        single: 9225,
+        married: 18450,
+        hoh: 13150
+      },
+      {
+        rate: .25,
+        single: 37450,
+        married: 74900,
+        hoh: 50200
       },
       {
         rate: .28,
-        income: 185400
+        single: 90750,
+        married: 151200,
+        hoh: 129600
+      },
+      {
+        rate: .33,
+        single: 189300,
+        married: 230450,
+        hoh: 209850
+      },
+      {
+        rate: .35,
+        single: 411500,
+        married: 411500,
+        hoh: 411500
+      },
+      {
+        rate: .396,
+        single: 413200,
+        married: 464850,
+        hoh: 439000
+      },
+      {
+        rate: .436,
+        single: 5000000,
+        married: 5000000,
+        hoh: 5000000
       }
     ],
-    single: {
-      exemption: 53600,
-      phaseout: 119200
+    eitc: {
+      0: {
+        max: 503,
+        threshold: 6580,
+        phaseout: {
+          single: 8240,
+          married: 13760,
+        },
+        maxIncome: {
+          single: 14820,
+          married: 20330,
+        }
+      },
+      1: {
+        max: 3359,
+        threshold: 9880,
+        phaseout: {
+          single: 18110,
+          married: 23630,
+        },
+        maxIncome: {
+          single: 39131,
+          married: 44651,
+        }
+      },
+      2: {
+        max: 5548,
+        threshold: 13870,
+        phaseout: {
+          single: 18110,
+          married: 23630,
+        },
+        maxIncome: {
+          single: 44454,
+          married: 49974,
+        }
+      },
+      3: {
+        max: 6242,
+        threshold: 13870,
+        phaseout: {
+          single: 18110,
+          married: 23630,
+        },
+        maxIncome: {
+          single: 47747,
+          married: 53267,
+        }
+      }
     },
-    married: {
-      exemption: 83400,
-      phaseout: 158900
+    employeePayroll: [
+      {
+        rate: .0765,
+        income: 0
+      },
+      {
+        rate: .0145,
+        income: 118500
+      }
+    ],
+    employerPayroll: [
+      {
+        rate: .0765,
+        income: 0
+      },
+      {
+        rate: .0145,
+        income: 118500
+      }
+    ],
+    medicareSurtax: {
+      single: [
+        {
+          rate: 0,
+          income: 0
+        },
+        {
+          rate: .009,
+          income: 200000
+        }
+      ],
+      married: [
+        {
+          rate: 0,
+          income: 0
+        },
+        {
+          rate: .009,
+          income: 250000
+        }
+      ]
+    },
+    unemploymentInsurance: {
+      rate: .06,
+      income: 7000
+    },
+    ctc: {
+      credit: 1000,
+      phaseIn: 3000,
+      phaseInRate: .15,
+      phaseout: {
+        single: 75000,
+        married: 110000
+      },
+      phaseoutRate: .05
+    },
+    pepPease: {
+      threshold: {
+        single: 258250,
+        married: 309900,
+        hoh: 284050
+      },
+      phaseoutRate: .02
+    },
+    amt: {
+      brackets: [
+        {
+          rate: .26,
+          income: 0
+        },
+        {
+          rate: .28,
+          income: 185400
+        }
+      ],
+      single: {
+        exemption: 53600,
+        phaseout: 119200
+      },
+      married: {
+        exemption: 83400,
+        phaseout: 158900
+      }
     }
+  },
+  {
+    name: 'Trump Plan',
+    id: 'trump',
+    standardDeuction: {
+      single: 15000,
+      married: 30000,
+      hoh: 15000,
+    },
+    personalExemption: 0,
+    brackets: [
+      {
+        rate: .12,
+        single: 0,
+        married: 0,
+        hoh: 0
+      },
+      {
+        rate: .25,
+        single: 37500,
+        married: 75000,
+        hoh: 37500
+      },
+      {
+        rate: .33,
+        single: 112500,
+        married: 225000,
+        hoh: 75000
+      },
+    ],
+    eitc: {
+      0: {
+        max: 503,
+        threshold: 6580,
+        phaseout: {
+          single: 8240,
+          married: 13760,
+        },
+        maxIncome: {
+          single: 14820,
+          married: 20330,
+        }
+      },
+      1: {
+        max: 3359,
+        threshold: 9880,
+        phaseout: {
+          single: 18110,
+          married: 23630,
+        },
+        maxIncome: {
+          single: 39131,
+          married: 44651,
+        }
+      },
+      2: {
+        max: 5548,
+        threshold: 13870,
+        phaseout: {
+          single: 18110,
+          married: 23630,
+        },
+        maxIncome: {
+          single: 44454,
+          married: 49974,
+        }
+      },
+      3: {
+        max: 6242,
+        threshold: 13870,
+        phaseout: {
+          single: 18110,
+          married: 23630,
+        },
+        maxIncome: {
+          single: 47747,
+          married: 53267,
+        }
+      }
+    },
+    employeePayroll: [
+      {
+        rate: .0765,
+        income: 0
+      },
+      {
+        rate: .0145,
+        income: 118500
+      }
+    ],
+    employerPayroll: [
+      {
+        rate: .0765,
+        income: 0
+      },
+      {
+        rate: .0145,
+        income: 118500
+      }
+    ],
+    medicareSurtax: {
+      single: [
+        {
+          rate: 0,
+          income: 0
+        },
+        {
+          rate: .009,
+          income: 200000
+        }
+      ],
+      married: [
+        {
+          rate: 0,
+          income: 0
+        },
+        {
+          rate: .009,
+          income: 250000
+        }
+      ]
+    },
+    unemploymentInsurance: {
+      rate: .06,
+      income: 7000
+    },
+    ctc: {
+      credit: 1000,
+      phaseIn: 3000,
+      phaseInRate: .15,
+      phaseout: {
+        single: 75000,
+        married: 110000
+      },
+      phaseoutRate: .05
+    },
+    pepPease: {
+      threshold: {
+        single: 258250,
+        married: 309900,
+        hoh: 284050
+      },
+      phaseoutRate: .05
+    },
   }
-}
+]
 
-var trumpTaxes = {
-  standardDeuction: {
-    single: 15000,
-    married: 30000,
-    hoh: 15000,
-  },
-  personalExemption: 0,
-  brackets: [
-    {
-      rate: .12,
-      single: 0,
-      married: 0,
-      hoh: 0
-    },
-    {
-      rate: .25,
-      single: 37500,
-      married: 75000,
-      hoh: 37500
-    },
-    {
-      rate: .33,
-      single: 112500,
-      married: 225000,
-      hoh: 75000
-    },
-  ],
-  eitc: {
-    0: {
-      max: 503,
-      threshold: 6580,
-      phaseout: {
-        single: 8240,
-        married: 13760,
-      },
-      maxIncome: {
-        single: 14820,
-        married: 20330,
-      }
-    },
-    1: {
-      max: 3359,
-      threshold: 9880,
-      phaseout: {
-        single: 18110,
-        married: 23630,
-      },
-      maxIncome: {
-        single: 39131,
-        married: 44651,
-      }
-    },
-    2: {
-      max: 5548,
-      threshold: 13870,
-      phaseout: {
-        single: 18110,
-        married: 23630,
-      },
-      maxIncome: {
-        single: 44454,
-        married: 49974,
-      }
-    },
-    3: {
-      max: 6242,
-      threshold: 13870,
-      phaseout: {
-        single: 18110,
-        married: 23630,
-      },
-      maxIncome: {
-        single: 47747,
-        married: 53267,
-      }
-    }
-  },
-  employeePayroll: [
-    {
-      rate: .0765,
-      income: 0
-    },
-    {
-      rate: .0145,
-      income: 118500
-    }
-  ],
-  employerPayroll: [
-    {
-      rate: .0765,
-      income: 0
-    },
-    {
-      rate: .0145,
-      income: 118500
-    }
-  ],
-  medicareSurtax: {
-    single: [
-      {
-        rate: 0,
-        income: 0
-      },
-      {
-        rate: .009,
-        income: 200000
-      }
-    ],
-    married: [
-      {
-        rate: 0,
-        income: 0
-      },
-      {
-        rate: .009,
-        income: 250000
-      }
-    ]
-  },
-  unemploymentInsurance: {
-    rate: .06,
-    income: 7000
-  },
-  ctc: {
-    credit: 1000,
-    phaseIn: 3000,
-    phaseInRate: .15,
-    phaseout: {
-      single: 75000,
-      married: 110000
-    },
-    phaseoutRate: .05
-  },
-  pepPease: {
-    threshold: {
-      single: 258250,
-      married: 309900,
-      hoh: 284050
-    },
-    phaseoutRate: .05
-  },
-}
+
+window.addEventListener('load', function (event) {
+  app.init();
+});
