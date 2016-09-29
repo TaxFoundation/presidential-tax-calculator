@@ -42,7 +42,15 @@ var app = {
     app.calculate();
   },
 
-  getStatus: function (children, married) {
+  getBinaryStatus: function (children, married) {
+    if (married) {
+      return 'married';
+    } else {
+      return 'single';
+    }
+  },
+
+  getTrinaryStatus: function (children, married) {
     if (married) {
       return 'married';
     } else if (children > 0) {
@@ -63,20 +71,21 @@ var app = {
     var income1 = isNaN(parseInt(app.income1.value)) ? 0 : parseInt(app.income1.value);
     var income2 = isNaN(parseInt(app.income2.value)) ? 0 : parseInt(app.income2.value);
     var children = isNaN(parseInt(app.children.value)) ? 0 : parseInt(app.children.value);
-    var status = app.getStatus(children, app.married.checked);
+    var binaryStatus = app.getBinaryStatus(children, app.married.checked);
+    var trinaryStatus = app.getTrinaryStatus(children, app.married.checked);
 
     for (var plan = 0, j = app.laws.length; plan < j; plan++) {
-      var federalTaxableIncome = taxCalculator.getFederalTaxableIncome(income1, income2, children, status, app.laws[plan], 0);
-      var federalIncomeTax = taxCalculator.getFederalIncomeTax(federalTaxableIncome, status, app.laws[plan]);
-      var childTaxCredit = taxCalculator.getFederalChildTaxCredit(income1, income2, children, status, app.laws[plan]);
-      var eitc = taxCalculator.getFederalEITC(income1, income2, children, status, app.laws[plan]);
+      var federalTaxableIncome = taxCalculator.getFederalTaxableIncome(income1, income2, children, trinaryStatus, app.laws[plan], 0);
+      var federalIncomeTax = taxCalculator.getFederalIncomeTax(federalTaxableIncome, trinaryStatus, app.laws[plan]);
+      var childTaxCredit = taxCalculator.getFederalChildTaxCredit(income1, income2, children, binaryStatus, app.laws[plan]);
+      var eitc = taxCalculator.getFederalEITC(income1, income2, children, binaryStatus, app.laws[plan]);
       var federalIncomeTaxAfterCredits = federalIncomeTax - childTaxCredit - eitc;
       var employeePayrollTax = taxCalculator.getFederalEmployeePayrollTax(income1, app.laws[plan])
         + taxCalculator.getFederalEmployeePayrollTax(income2, app.laws[plan]);
       var taxBurden = federalIncomeTaxAfterCredits + employeePayrollTax;
       var employerPayrollTax = taxCalculator.getFederalEmployerPayrollTax(income1, app.laws[plan])
         + taxCalculator.getFederalEmployerPayrollTax(income2, app.laws[plan]);
-      var medicareSurtax = taxCalculator.getMedicareSurtax(income1, income2, status, app.laws[plan])
+      var medicareSurtax = taxCalculator.getMedicareSurtax(income1, income2, binaryStatus, app.laws[plan])
       var taxWedge = taxBurden + employerPayrollTax + medicareSurtax;
 
       document.getElementById(app.laws[plan].id + '-taxable-income').innerHTML = federalTaxableIncome;
