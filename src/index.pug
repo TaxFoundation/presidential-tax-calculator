@@ -1,5 +1,64 @@
 style
 	include ../dist/css/style.css
 #app.tax-calculator
+	input#income1(type='number')
+	input#income2(type='number')
+	input#children(type='number')
+	input#married(type='checkbox')
+	table.results
+		thead
+			tr
+				th(colspan='4') Results
+			tr
+				th Value
+				th Current Law
+				th Clinton
+				th Trump
+		tbody
+			tr
+				td Taxable Income
+				td#current-taxable-income
+				td#clinton-taxable-income
+				td#trump-taxable-income
+			tr
+				td Federal Income Tax
+				td#current-income-tax
+				td#clinton-income-tax
+				td#trump-income-tax
+			tr
+				td Child Tax Credit
+				td#current-ctc
+				td#clinton-ctc
+				td#trump-ctc
+			tr
+				td EITC
+				td#current-eitc
+				td#clinton-eitc
+				td#trump-eitc
+			tr
+				td Federal Income Tax After Credits
+				td#current-income-tax-after-credits
+				td#clinton-income-tax-after-credits
+				td#trump-income-tax-after-credits
+			tr
+				td Employee Payroll Tax
+				td#current-employee-payroll-tax
+				td#clinton-employee-payroll-tax
+				td#trump-employee-payroll-tax
+			tr
+				td Tax Burden
+				td#current-tax-burden
+				td#clinton-tax-burden
+				td#trump-tax-burden
+			tr
+				td Employer Payroll Tax
+				td#current-employer-payroll-tax
+				td#clinton-employer-payroll-tax
+				td#trump-employer-payroll-tax
+			tr
+				td Tax Wedge
+				td#current-tax-wedge
+				td#clinton-tax-wedge
+				td#trump-tax-wedge
 script
 	include ../dist/js/app.js
