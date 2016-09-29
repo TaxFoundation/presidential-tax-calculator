@@ -14,6 +14,7 @@ var app = {
       { name: 'Employee Payroll Tax', id: 'employee-payroll-tax' },
       { name: 'Tax Burden', id: 'tax-burden' },
       { name: 'Employer Payroll Tax', id: 'employer-payroll-tax' },
+      { name: 'Medicare Surtax', id: 'medicare-surtax' },
       { name: 'Tax Wedge', id: 'tax-wedge' },
     ];
 
@@ -75,7 +76,8 @@ var app = {
       var taxBurden = federalIncomeTaxAfterCredits + employeePayrollTax;
       var employerPayrollTax = taxCalculator.getFederalEmployerPayrollTax(income1, app.laws[plan])
         + taxCalculator.getFederalEmployerPayrollTax(income2, app.laws[plan]);
-      var taxWedge = taxBurden + employerPayrollTax;
+      var medicareSurtax = taxCalculator.getMedicareSurtax(income1, income2, status, app.laws[plan])
+      var taxWedge = taxBurden + employerPayrollTax + medicareSurtax;
 
       document.getElementById(app.laws[plan].id + '-taxable-income').innerHTML = federalTaxableIncome;
       document.getElementById(app.laws[plan].id + '-federal-income-tax').innerHTML = federalIncomeTax;
@@ -86,6 +88,7 @@ var app = {
       document.getElementById(app.laws[plan].id + '-employee-payroll-tax').innerHTML = employeePayrollTax;
       document.getElementById(app.laws[plan].id + '-tax-burden').innerHTML = taxBurden;
       document.getElementById(app.laws[plan].id + '-employer-payroll-tax').innerHTML = employerPayrollTax;
+      document.getElementById(app.laws[plan].id + '-medicare-surtax').innerHTML = medicareSurtax;
       document.getElementById(app.laws[plan].id + '-tax-wedge').innerHTML = taxWedge;
     }
   }

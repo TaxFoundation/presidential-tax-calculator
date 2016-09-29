@@ -1,10 +1,14 @@
 style
 	include ../dist/css/style.css
 #app.tax-calculator
-	input#income1(type='number', value=0, onchange='app.calculate()')
-	input#income2(type='number', value=0, onchange='app.calculate()')
-	input#children(type='number', value=0, onchange='app.calculate()')
-	input#married(type='checkbox', onchange='app.calculate()')
+	label(for='income1') Income #1
+	input#income1(name='income1', type='number', value=0, onchange='app.calculate()')
+	label(for='income2') Income #2
+	input#income2(name='income2', type='number', value=0, onchange='app.calculate()')
+	label(for='children') Children
+	input#children(name='children', type='number', value=0, onchange='app.calculate()')
+	label(for='married') Married?
+	input#married(name='married', type='checkbox', onchange='app.calculate()')
 	table.results
 		thead
 			tr
