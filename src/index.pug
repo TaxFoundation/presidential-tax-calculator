@@ -1,24 +1,48 @@
 style
-	include ../dist/css/style.css
+  include ../dist/css/style.css
 #app.tax-calculator
-	label(for='income1') Income #1
-	input#income1(name='income1', type='number', value=0, onchange='app.calculate()')
-	label(for='income2') Income #2
-	input#income2(name='income2', type='number', value=0, onchange='app.calculate()')
-	label(for='children') Children
-	input#children(name='children', type='number', value=0, onchange='app.calculate()')
-	label(for='married') Married?
-	input#married(name='married', type='checkbox', onchange='app.calculate()')
-	table.results
-		thead
-			tr
-				th(colspan='4') Results
-			tr
-				th Value
-				th Current Law
-				th Clinton
-				th Trump
-		tbody#tax-results-body
+  .tax-calculator__fields
+    .tax-calculator__field
+      label(for='income1') Income #1
+      input#income1(
+        name='income1',
+        type='number',
+        value=0,
+        onchange='app.calculate()'
+      )
+    .tax-calculator__field
+      label(for='income2') Income #2
+      input#income2(
+        name='income2',
+        type='number',
+        value=0,
+        onchange='app.calculate()'
+      )
+    .tax-calculator__field
+      label(for='children') Children
+      input#children(
+        name='children',
+        type='number',
+        value=0,
+        onchange='app.calculate()'
+      )
+    .tax-calculator__field
+      label(for='married') Married?
+      input#married(
+        name='married',
+        type='checkbox',
+        onchange='app.calculate()'
+      )
+  table.results
+    thead
+      tr
+        th(colspan='4') Results
+      tr
+        th Value
+        th Current Law
+        th Clinton
+        th Trump
+    tbody#tax-results-body
 
 script
-	include ../dist/js/app.js
+  include ../dist/js/app.js
