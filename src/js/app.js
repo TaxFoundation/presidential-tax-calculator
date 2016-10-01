@@ -6,16 +6,46 @@ var app = {
     this.married = document.getElementById('married');
 
     this.tableRows = [
-      { name: 'Taxable Income', id: 'taxable-income' },
-      { name: 'Federal Income Tax', id: 'federal-income-tax' },
-      { name: 'Child Tax Credit', id: 'ctc' },
-      { name: 'EITC', id: 'eitc' },
-      { name: 'Federal Income Tax After Credits', id: 'federal-income-tax-after-credits' },
-      { name: 'Employee Payroll Tax', id: 'employee-payroll-tax' },
-      { name: 'Tax Burden', id: 'tax-burden' },
-      { name: 'Employer Payroll Tax', id: 'employer-payroll-tax' },
-      { name: 'Medicare Surtax', id: 'medicare-surtax' },
-      { name: 'Tax Wedge', id: 'tax-wedge' },
+      {
+        name: 'Taxable Income',
+        id: 'taxable-income',
+      },
+      {
+        name: 'Federal Income Tax',
+        id: 'federal-income-tax',
+      },
+      {
+        name: 'Child Tax Credit',
+        id: 'ctc',
+      },
+      {
+        name: 'EITC',
+        id: 'eitc',
+      },
+      {
+        name: 'Federal Income Tax After Credits',
+        id: 'federal-income-tax-after-credits',
+      },
+      {
+        name: 'Employee Payroll Tax',
+        id: 'employee-payroll-tax',
+      },
+      {
+        name: 'Tax Burden',
+        id: 'tax-burden',
+      },
+      {
+        name: 'Employer Payroll Tax',
+        id: 'employer-payroll-tax',
+      },
+      {
+        name: 'Medicare Surtax',
+        id: 'medicare-surtax',
+      },
+      {
+        name: 'Tax Wedge',
+        id: 'tax-wedge',
+      },
     ];
 
     this.laws = taxLaws;
@@ -75,40 +105,116 @@ var app = {
     var trinaryStatus = app.getTrinaryStatus(children, app.married.checked);
 
     for (var plan = 0, j = app.laws.length; plan < j; plan++) {
-      var federalTaxableIncome = taxCalculator.getFederalTaxableIncome(income1, income2, children, trinaryStatus, app.laws[plan], 0);
-      var federalIncomeTax = taxCalculator.getFederalIncomeTax(federalTaxableIncome, trinaryStatus, app.laws[plan]);
-      var childTaxCredit = taxCalculator.getFederalChildTaxCredit(income1, income2, children, binaryStatus, app.laws[plan]);
-      var eitc = taxCalculator.getFederalEITC(income1, income2, children, binaryStatus, app.laws[plan]);
+      var federalTaxableIncome = taxCalculator
+        .getFederalTaxableIncome(
+          income1,
+          income2,
+          children,
+          trinaryStatus,
+          app.laws[plan],
+          0
+        );
+      var federalIncomeTax = taxCalculator
+        .getFederalIncomeTax(
+          federalTaxableIncome,
+          trinaryStatus,
+          app.laws[plan]
+        );
+      var childTaxCredit = taxCalculator
+        .getFederalChildTaxCredit(
+          income1,
+          income2,
+          children,
+          binaryStatus,
+          app.laws[plan]
+        );
+      var eitc = taxCalculator
+        .getFederalEITC(
+          income1,
+          income2,
+          children,
+          binaryStatus,
+          app.laws[plan]
+        );
       var federalIncomeTaxAfterCredits = federalIncomeTax - childTaxCredit - eitc;
-      var employeePayrollTax = taxCalculator.getFederalEmployeePayrollTax(income1, app.laws[plan])
-        + taxCalculator.getFederalEmployeePayrollTax(income2, app.laws[plan]);
+      var employeePayrollTax = taxCalculator
+        .getFederalEmployeePayrollTax(income1, app.laws[plan]) +
+        taxCalculator.getFederalEmployeePayrollTax(income2, app.laws[plan]);
       var taxBurden = federalIncomeTaxAfterCredits + employeePayrollTax;
-      var employerPayrollTax = taxCalculator.getFederalEmployerPayrollTax(income1, app.laws[plan])
-        + taxCalculator.getFederalEmployerPayrollTax(income2, app.laws[plan]);
-      var medicareSurtax = taxCalculator.getMedicareSurtax(income1, income2, binaryStatus, app.laws[plan])
+      var employerPayrollTax = taxCalculator
+        .getFederalEmployerPayrollTax(income1, app.laws[plan]) +
+        taxCalculator.getFederalEmployerPayrollTax(income2, app.laws[plan]);
+      var medicareSurtax = taxCalculator
+        .getMedicareSurtax(income1, income2, binaryStatus, app.laws[plan]);
       var taxWedge = taxBurden + employerPayrollTax + medicareSurtax;
 
-      document.getElementById(app.laws[plan].id + '-taxable-income').innerHTML = federalTaxableIncome;
-      document.getElementById(app.laws[plan].id + '-federal-income-tax').innerHTML = federalIncomeTax;
-      document.getElementById(app.laws[plan].id + '-ctc').innerHTML = childTaxCredit;
-      document.getElementById(app.laws[plan].id + '-eitc').innerHTML = eitc;
-      document.getElementById(app.laws[plan].id + '-federal-income-tax-after-credits').innerHTML
-        = federalIncomeTaxAfterCredits;
-      document.getElementById(app.laws[plan].id + '-employee-payroll-tax').innerHTML = employeePayrollTax;
-      document.getElementById(app.laws[plan].id + '-tax-burden').innerHTML = taxBurden;
-      document.getElementById(app.laws[plan].id + '-employer-payroll-tax').innerHTML = employerPayrollTax;
-      document.getElementById(app.laws[plan].id + '-medicare-surtax').innerHTML = medicareSurtax;
-      document.getElementById(app.laws[plan].id + '-tax-wedge').innerHTML = taxWedge;
+      document.getElementById(
+          app.laws[plan].id +
+          '-taxable-income'
+        )
+        .innerHTML = federalTaxableIncome;
+      document.getElementById(
+          app.laws[plan].id +
+          '-federal-income-tax'
+        )
+        .innerHTML = federalIncomeTax;
+      document.getElementById(
+          app.laws[plan].id +
+          '-ctc'
+        )
+        .innerHTML = childTaxCredit;
+      document.getElementById(
+          app.laws[plan].id +
+          '-eitc'
+        )
+        .innerHTML = eitc;
+      document.getElementById(
+          app.laws[plan].id +
+          '-federal-income-tax-after-credits'
+        )
+        .innerHTML = federalIncomeTaxAfterCredits;
+      document.getElementById(
+          app.laws[plan].id +
+          '-employee-payroll-tax'
+        )
+        .innerHTML = employeePayrollTax;
+      document.getElementById(
+          app.laws[plan].id +
+          '-tax-burden'
+        )
+        .innerHTML = taxBurden;
+      document.getElementById(
+          app.laws[plan].id +
+          '-employer-payroll-tax'
+        )
+        .innerHTML = employerPayrollTax;
+      document.getElementById(
+          app.laws[plan].id +
+          '-medicare-surtax'
+        )
+        .innerHTML = medicareSurtax;
+      document.getElementById(
+          app.laws[plan].id +
+          '-tax-wedge'
+        )
+        .innerHTML = taxWedge;
     }
-  }
-}
+  },
+};
 
 var taxCalculator = {
   roundToHundredths: function (number) {
     return Math.round(number * 100) / 100;
   },
 
-  getFederalTaxableIncome: function (income1, income2, children, status, taxLaw, stateIncomeTax) {
+  getFederalTaxableIncome: function (
+      income1,
+      income2,
+      children,
+      status,
+      taxLaw,
+      stateIncomeTax
+    ) {
     var income = income1 + income2;
     var exemption = 0;
     var deduction = 0;
@@ -117,18 +223,32 @@ var taxCalculator = {
     if (income > taxLaw.pepPease.threshold[status]) {
       exemption = Math.max(
         0,
-        (1 - Math.ceil(income - taxLaw.pepPease.threshold[status] / 2500)
-          * taxLaw.pepPease.phaseoutRate)
-        * (taxLaw.personalExemption * (1 + children + (status == 'married' ? 1 : 0)))
+        (
+          1 -
+          Math.ceil(
+            income - taxLaw.pepPease.threshold[status] / 2500
+          ) *
+          taxLaw.pepPease.phaseoutRate
+        ) *
+        (
+          taxLaw.personalExemption *
+          (
+            1 +
+            children +
+            (status == 'married' ? 1 : 0)
+          )
+        )
       );
     } else {
-      exemption = taxLaw.personalExemption 
-      * (1 + children + (status == 'married' ? 1 : 0));
+      exemption = taxLaw.personalExemption *
+      (1 + children + (status == 'married' ? 1 : 0));
     }
 
     if (stateIncomeTax > taxLaw.standardDeuction[status]) {
       if (income > taxLaw.pepPease.threshold[status]) {
-        deduction = stateIncomeTax - (income - taxLaw.pepPease.threshold[status]) * .02;
+        deduction = stateIncomeTax -
+          (income - taxLaw.pepPease.threshold[status]) *
+          0.02;
       } else {
         deduction = stateIncomeTax;
       }
@@ -148,8 +268,8 @@ var taxCalculator = {
     // Loop through brackets backward for ease of calculation
     for (var i = taxLaw.brackets.length - 1, j = -1; i > j; i--) {
       if (income > taxLaw.brackets[i][status]) {
-        federalIncomeTax = federalIncomeTax
-          + ((income - taxLaw.brackets[i][status]) * taxLaw.brackets[i].rate);
+        federalIncomeTax = federalIncomeTax +
+          ((income - taxLaw.brackets[i][status]) * taxLaw.brackets[i].rate);
         income = taxLaw.brackets[i][status];
       }
     }
@@ -163,18 +283,17 @@ var taxCalculator = {
     var theEITC = taxLaw.eitc[dependents];
     var earnedIncomeTaxCredit = 0;
 
-
     if (income < theEITC.threshold) {
-      earnedIncomeTaxCredit = income 
-        * (theEITC.maxIncome[status] / theEITC.threshold);
+      earnedIncomeTaxCredit = income *
+        (theEITC.maxIncome[status] / theEITC.threshold);
     } else if (income >= theEITC.threshold && income <= theEITC.phaseout[status]) {
-      earnedIncomeTaxCredit = theEITC.maxIncome[status]
+      earnedIncomeTaxCredit = theEITC.maxIncome[status];
     } else if (income > theEITC.phaseout[status]) {
       earnedIncomeTaxCredit = Math.max(
         0,
         theEITC.max + (
-          (theEITC.phaseout[status] - income)
-          * (theEITC.max / (theEITC.maxIncome[status] - theEITC.phaseout[status]))
+          (theEITC.phaseout[status] - income) *
+          (theEITC.max / (theEITC.maxIncome[status] - theEITC.phaseout[status]))
         )
       );
     }
@@ -182,7 +301,13 @@ var taxCalculator = {
     return taxCalculator.roundToHundredths(earnedIncomeTaxCredit);
   },
 
-  getFederalChildTaxCredit: function (income1, income2, children, status, taxLaw) {
+  getFederalChildTaxCredit: function (
+      income1,
+      income2,
+      children,
+      status,
+      taxLaw
+    ) {
     var income = income1 + income2;
     var childTaxCredit = 0;
 
@@ -191,13 +316,20 @@ var taxCalculator = {
         childTaxCredit = 0;
       } else if (income <= taxLaw.ctc.phaseout[status]) {
         childTaxCredit = Math.min(
-          taxLaw.ctc.credit * children, (income - taxLaw.ctc.phaseIn) * taxLaw.ctc.phaseInRate
+          taxLaw.ctc.credit *
+          children,
+          (income - taxLaw.ctc.phaseIn) *
+          taxLaw.ctc.phaseInRate
         );
       } else if (income > taxLaw.ctc.phaseout[status]) {
         childTaxCredit = Math.max(
           0,
-          (taxLaw.ctc.credit * children)
-          - (Math.ceil((income - taxLaw.ctc.phaseout[status]) * .001) * 1000) * taxLaw.ctc.phaseoutRate
+          (taxLaw.ctc.credit * children) -
+          (
+            Math.ceil(
+              (income - taxLaw.ctc.phaseout[status]) * 0.001
+            ) * 1000
+          ) * taxLaw.ctc.phaseoutRate
         );
       }
     }
@@ -211,8 +343,11 @@ var taxCalculator = {
 
     for (var i = taxLaw.employeePayroll.length - 1, j = -1; i > j; i--) {
       if (income > taxLaw.employeePayroll[i].income) {
-        employeePayrollTax = employeePayrollTax
-          + ((income - taxLaw.employeePayroll[i].income) * taxLaw.employeePayroll[i].rate);
+        employeePayrollTax = employeePayrollTax +
+          (
+            (income - taxLaw.employeePayroll[i].income) *
+            taxLaw.employeePayroll[i].rate
+          );
         income = taxLaw.employeePayroll[i].income;
       }
     }
@@ -226,8 +361,11 @@ var taxCalculator = {
 
     for (var i = taxLaw.employerPayroll.length - 1, j = -1; i > j; i--) {
       if (income > taxLaw.employerPayroll[i].income) {
-        employerPayrollTax = employerPayrollTax
-          + ((income - taxLaw.employerPayroll[i].income) * taxLaw.employerPayroll[i].rate);
+        employerPayrollTax = employerPayrollTax +
+          (
+            (income - taxLaw.employerPayroll[i].income) *
+            taxLaw.employerPayroll[i].rate
+          );
         income = taxLaw.employerPayroll[i].income;
       }
     }
@@ -241,8 +379,11 @@ var taxCalculator = {
 
     for (var i = taxLaw.medicareSurtax[status].length - 1, j = -1; i > j; i--) {
       if (income > taxLaw.medicareSurtax[status][i].income) {
-        medicareSurtax = medicareSurtax
-          + ((income - taxLaw.medicareSurtax[status][i].income) * taxLaw.medicareSurtax[status][i].rate);
+        medicareSurtax = medicareSurtax +
+          (
+            (income - taxLaw.medicareSurtax[status][i].income) *
+            taxLaw.medicareSurtax[status][i].rate
+          );
         income = taxLaw.medicareSurtax[status][i].income;
       }
     }
@@ -254,14 +395,21 @@ var taxCalculator = {
     if (taxLaw.amt) {
       var income = (income1 + income2) - Math.max(
         0,
-        taxLaw.amt[status].exemption - Math.max(0, (income1 + income2) - taxLaw.amt[status].phaseout * .25)
+        taxLaw.amt[status].exemption -
+        Math.max(
+          0,
+          (income1 + income2) -
+          taxLaw.amt[status].phaseout * 0.25
+        )
       );
       var amt = 0;
 
       for (var i = taxLaw.amt.length - 1, j = -1; i > j; i--) {
         if (income > taxLaw.amt[i].income) {
-          amt = amt
-            + ((income - taxLaw.amt[i].income) * taxLaw.amt[i].rate);
+          amt = amt +
+            (
+              (income - taxLaw.amt[i].income) * taxLaw.amt[i].rate
+            );
           income = taxLaw.amt[i].income;
         }
       }
@@ -270,8 +418,8 @@ var taxCalculator = {
     } else {
       return 0;
     }
-  }
-}
+  },
+};
 
 var taxLaws = [
   {
@@ -285,46 +433,46 @@ var taxLaws = [
     personalExemption: 4000,
     brackets: [
       {
-        rate: .1,
+        rate: 0.1,
         single: 0,
         married: 0,
-        hoh: 0
+        hoh: 0,
       },
       {
-        rate: .15,
+        rate: 0.15,
         single: 9225,
         married: 18450,
-        hoh: 13150
+        hoh: 13150,
       },
       {
-        rate: .25,
+        rate: 0.25,
         single: 37450,
         married: 74900,
-        hoh: 50200
+        hoh: 50200,
       },
       {
-        rate: .28,
+        rate: 0.28,
         single: 90750,
         married: 151200,
-        hoh: 129600
+        hoh: 129600,
       },
       {
-        rate: .33,
+        rate: 0.33,
         single: 189300,
         married: 230450,
-        hoh: 209850
+        hoh: 209850,
       },
       {
-        rate: .35,
+        rate: 0.35,
         single: 411500,
         married: 411500,
-        hoh: 411500
+        hoh: 411500,
       },
       {
-        rate: .396,
+        rate: 0.396,
         single: 413200,
         married: 464850,
-        hoh: 439000
+        hoh: 439000,
       },
     ],
     eitc: {
@@ -338,7 +486,7 @@ var taxLaws = [
         maxIncome: {
           single: 14820,
           married: 20330,
-        }
+        },
       },
       1: {
         max: 3359,
@@ -350,7 +498,7 @@ var taxLaws = [
         maxIncome: {
           single: 39131,
           married: 44651,
-        }
+        },
       },
       2: {
         max: 5548,
@@ -362,7 +510,7 @@ var taxLaws = [
         maxIncome: {
           single: 44454,
           married: 49974,
-        }
+        },
       },
       3: {
         max: 6242,
@@ -374,93 +522,93 @@ var taxLaws = [
         maxIncome: {
           single: 47747,
           married: 53267,
-        }
-      }
+        },
+      },
     },
     employeePayroll: [
       {
-        rate: .0765,
-        income: 0
+        rate: 0.0765,
+        income: 0,
       },
       {
-        rate: .0145,
-        income: 118500
-      }
+        rate: 0.0145,
+        income: 118500,
+      },
     ],
     employerPayroll: [
       {
-        rate: .0765,
-        income: 0
+        rate: 0.0765,
+        income: 0,
       },
       {
-        rate: .0145,
-        income: 118500
-      }
+        rate: 0.0145,
+        income: 118500,
+      },
     ],
     medicareSurtax: {
       single: [
         {
           rate: 0,
-          income: 0
+          income: 0,
         },
         {
-          rate: .009,
-          income: 200000
-        }
+          rate: 0.009,
+          income: 200000,
+        },
       ],
       married: [
         {
           rate: 0,
-          income: 0
+          income: 0,
         },
         {
-          rate: .009,
-          income: 250000
-        }
-      ]
+          rate: 0.009,
+          income: 250000,
+        },
+      ],
     },
     unemploymentInsurance: {
-      rate: .06,
-      income: 7000
+      rate: 0.06,
+      income: 7000,
     },
     ctc: {
       credit: 1000,
       phaseIn: 3000,
-      phaseInRate: .15,
+      phaseInRate: 0.15,
       phaseout: {
         single: 75000,
-        married: 110000
+        married: 110000,
       },
-      phaseoutRate: .05
+      phaseoutRate: 0.05,
     },
     pepPease: {
       threshold: {
         single: 258250,
         married: 309900,
-        hoh: 284050
+        hoh: 284050,
       },
-      phaseoutRate: .02
+      phaseoutRate: 0.02,
     },
     amt: {
       brackets: [
         {
-          rate: .26,
-          income: 0
+          rate: 0.26,
+          income: 0,
         },
         {
-          rate: .28,
-          income: 185400
-        }
+          rate: 0.28,
+          income: 185400,
+        },
       ],
       single: {
         exemption: 53600,
-        phaseout: 119200
+        phaseout: 119200,
       },
       married: {
         exemption: 83400,
-        phaseout: 158900
-      }
-    }
+        phaseout: 158900,
+      },
+    },
   },
   {
     name: 'Clinton Plan',
@@ -473,53 +621,53 @@ var taxLaws = [
     personalExemption: 4000,
     brackets: [
       {
-        rate: .1,
+        rate: 0.1,
         single: 0,
         married: 0,
-        hoh: 0
+        hoh: 0,
       },
       {
-        rate: .15,
+        rate: 0.15,
         single: 9225,
         married: 18450,
-        hoh: 13150
+        hoh: 13150,
       },
       {
-        rate: .25,
+        rate: 0.25,
         single: 37450,
         married: 74900,
-        hoh: 50200
+        hoh: 50200,
       },
       {
-        rate: .28,
+        rate: 0.28,
         single: 90750,
         married: 151200,
-        hoh: 129600
+        hoh: 129600,
       },
       {
-        rate: .33,
+        rate: 0.33,
         single: 189300,
         married: 230450,
-        hoh: 209850
+        hoh: 209850,
       },
       {
-        rate: .35,
+        rate: 0.35,
         single: 411500,
         married: 411500,
-        hoh: 411500
+        hoh: 411500,
       },
       {
-        rate: .396,
+        rate: 0.396,
         single: 413200,
         married: 464850,
-        hoh: 439000
+        hoh: 439000,
       },
       {
-        rate: .436,
+        rate: 0.436,
         single: 5000000,
         married: 5000000,
-        hoh: 5000000
-      }
+        hoh: 5000000,
+      },
     ],
     eitc: {
       0: {
@@ -532,7 +680,7 @@ var taxLaws = [
         maxIncome: {
           single: 14820,
           married: 20330,
-        }
+        },
       },
       1: {
         max: 3359,
@@ -544,7 +692,7 @@ var taxLaws = [
         maxIncome: {
           single: 39131,
           married: 44651,
-        }
+        },
       },
       2: {
         max: 5548,
@@ -556,7 +704,7 @@ var taxLaws = [
         maxIncome: {
           single: 44454,
           married: 49974,
-        }
+        },
       },
       3: {
         max: 6242,
@@ -568,93 +716,93 @@ var taxLaws = [
         maxIncome: {
           single: 47747,
           married: 53267,
-        }
-      }
+        },
+      },
     },
     employeePayroll: [
       {
-        rate: .0765,
-        income: 0
+        rate: 0.0765,
+        income: 0,
       },
       {
-        rate: .0145,
-        income: 118500
-      }
+        rate: 0.0145,
+        income: 118500,
+      },
     ],
     employerPayroll: [
       {
-        rate: .0765,
-        income: 0
+        rate: 0.0765,
+        income: 0,
       },
       {
-        rate: .0145,
-        income: 118500
-      }
+        rate: 0.0145,
+        income: 118500,
+      },
     ],
     medicareSurtax: {
       single: [
         {
           rate: 0,
-          income: 0
+          income: 0,
         },
         {
-          rate: .009,
-          income: 200000
-        }
+          rate: 0.009,
+          income: 200000,
+        },
       ],
       married: [
         {
           rate: 0,
-          income: 0
+          income: 0,
         },
         {
-          rate: .009,
-          income: 250000
-        }
-      ]
+          rate: 0.009,
+          income: 250000,
+        },
+      ],
     },
     unemploymentInsurance: {
-      rate: .06,
-      income: 7000
+      rate: 0.06,
+      income: 7000,
     },
     ctc: {
       credit: 1000,
       phaseIn: 3000,
-      phaseInRate: .15,
+      phaseInRate: 0.15,
       phaseout: {
         single: 75000,
-        married: 110000
+        married: 110000,
       },
-      phaseoutRate: .05
+      phaseoutRate: 0.05,
     },
     pepPease: {
       threshold: {
         single: 258250,
         married: 309900,
-        hoh: 284050
+        hoh: 284050,
       },
-      phaseoutRate: .02
+      phaseoutRate: 0.02,
     },
     amt: {
       brackets: [
         {
-          rate: .26,
-          income: 0
+          rate: 0.26,
+          income: 0,
         },
         {
-          rate: .28,
-          income: 185400
-        }
+          rate: 0.28,
+          income: 185400,
+        },
       ],
       single: {
         exemption: 53600,
-        phaseout: 119200
+        phaseout: 119200,
       },
       married: {
         exemption: 83400,
-        phaseout: 158900
-      }
-    }
+        phaseout: 158900,
+      },
+    },
   },
   {
     name: 'Trump Plan',
@@ -667,22 +815,22 @@ var taxLaws = [
     personalExemption: 0,
     brackets: [
       {
-        rate: .12,
+        rate: 0.12,
         single: 0,
         married: 0,
-        hoh: 0
+        hoh: 0,
       },
       {
-        rate: .25,
+        rate: 0.25,
         single: 37500,
         married: 75000,
-        hoh: 37500
+        hoh: 37500,
       },
       {
-        rate: .33,
+        rate: 0.33,
         single: 112500,
         married: 225000,
-        hoh: 75000
+        hoh: 75000,
       },
     ],
     eitc: {
@@ -696,7 +844,7 @@ var taxLaws = [
         maxIncome: {
           single: 14820,
           married: 20330,
-        }
+        },
       },
       1: {
         max: 3359,
@@ -708,7 +856,7 @@ var taxLaws = [
         maxIncome: {
           single: 39131,
           married: 44651,
-        }
+        },
       },
       2: {
         max: 5548,
@@ -720,7 +868,7 @@ var taxLaws = [
         maxIncome: {
           single: 44454,
           married: 49974,
-        }
+        },
       },
       3: {
         max: 6242,
@@ -732,76 +880,75 @@ var taxLaws = [
         maxIncome: {
           single: 47747,
           married: 53267,
-        }
-      }
+        },
+      },
     },
     employeePayroll: [
       {
-        rate: .0765,
-        income: 0
+        rate: 0.0765,
+        income: 0,
       },
       {
-        rate: .0145,
-        income: 118500
-      }
+        rate: 0.0145,
+        income: 118500,
+      },
     ],
     employerPayroll: [
       {
-        rate: .0765,
-        income: 0
+        rate: 0.0765,
+        income: 0,
       },
       {
-        rate: .0145,
-        income: 118500
-      }
+        rate: 0.0145,
+        income: 118500,
+      },
     ],
     medicareSurtax: {
       single: [
         {
           rate: 0,
-          income: 0
+          income: 0,
         },
         {
-          rate: .009,
-          income: 200000
-        }
+          rate: 0.009,
+          income: 200000,
+        },
       ],
       married: [
         {
           rate: 0,
-          income: 0
+          income: 0,
         },
         {
-          rate: .009,
-          income: 250000
-        }
-      ]
+          rate: 0.009,
+          income: 250000,
+        },
+      ],
     },
     unemploymentInsurance: {
-      rate: .06,
-      income: 7000
+      rate: 0.06,
+      income: 7000,
     },
     ctc: {
       credit: 1000,
       phaseIn: 3000,
-      phaseInRate: .15,
+      phaseInRate: 0.15,
       phaseout: {
         single: 75000,
-        married: 110000
+        married: 110000,
       },
-      phaseoutRate: .05
+      phaseoutRate: 0.05,
     },
     pepPease: {
       threshold: {
         single: 258250,
         married: 309900,
-        hoh: 284050
+        hoh: 284050,
       },
-      phaseoutRate: .05
+      phaseoutRate: 0.05,
     },
-  }
-]
-
+  },
+];
 
 window.addEventListener('load', function (event) {
   app.init();
