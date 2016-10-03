@@ -1,0 +1,12 @@
+.tax-calculator {
+  &__number-field {
+    -moz-appearance: textfield;
+    text-align: right;
+
+    &::-webkit-inner-spin-button,
+    &::-webkit-outer-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+  }
+}

@@ -1,0 +1,27 @@
+$border-color: #666666;
+
+.tax-calculator-table {
+  border: 1px solid $border-color;
+  border-radius: 4px;
+
+  &__head {
+    border-bottom: 1px solid $border-color;
+  }
+
+  &__title {
+    border-bottom: 1px solid $border-color;
+  }
+
+  &__headers {
+
+  }
+
+  &__body {
+
+  }
+
+  &__result {
+    font-family: monospace;
+    text-align: right;
+  }
+}

@@ -62,6 +62,7 @@ var app = {
         cell = document.createElement('td');
         var cellId = app.laws[m].id + '-' + app.tableRows[i].id;
         cell.id = cellId;
+        cell.className = 'tax-calculator-table__result';
         document.getElementById(app.tableRows[i].id).appendChild(cell);
 
         this[cellId] = document.getElementById(cellId);
@@ -152,52 +153,52 @@ var app = {
           app.laws[plan].id +
           '-taxable-income'
         )
-        .innerHTML = federalTaxableIncome;
+        .innerHTML = '$' + federalTaxableIncome;
       document.getElementById(
           app.laws[plan].id +
           '-federal-income-tax'
         )
-        .innerHTML = federalIncomeTax;
+        .innerHTML = '$' + federalIncomeTax;
       document.getElementById(
           app.laws[plan].id +
           '-ctc'
         )
-        .innerHTML = childTaxCredit;
+        .innerHTML = '$' + childTaxCredit;
       document.getElementById(
           app.laws[plan].id +
           '-eitc'
         )
-        .innerHTML = eitc;
+        .innerHTML = '$' + eitc;
       document.getElementById(
           app.laws[plan].id +
           '-federal-income-tax-after-credits'
         )
-        .innerHTML = federalIncomeTaxAfterCredits;
+        .innerHTML = '$' + federalIncomeTaxAfterCredits;
       document.getElementById(
           app.laws[plan].id +
           '-employee-payroll-tax'
         )
-        .innerHTML = employeePayrollTax;
+        .innerHTML = '$' + employeePayrollTax;
       document.getElementById(
           app.laws[plan].id +
           '-tax-burden'
         )
-        .innerHTML = taxBurden;
+        .innerHTML = '$' + taxBurden;
       document.getElementById(
           app.laws[plan].id +
           '-employer-payroll-tax'
         )
-        .innerHTML = employerPayrollTax;
+        .innerHTML = '$' + employerPayrollTax;
       document.getElementById(
           app.laws[plan].id +
           '-medicare-surtax'
         )
-        .innerHTML = medicareSurtax;
+        .innerHTML = '$' + medicareSurtax;
       document.getElementById(
           app.laws[plan].id +
           '-tax-wedge'
         )
-        .innerHTML = taxWedge;
+        .innerHTML = '$' + taxWedge;
     }
   },
 };

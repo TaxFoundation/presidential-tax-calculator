@@ -1,5 +1,4 @@
 $tf-blue: #0094ff;
 
-.tax-calculator {
-  background-color: $tf-blue;
-}
+@import 'form';
+@import 'table';

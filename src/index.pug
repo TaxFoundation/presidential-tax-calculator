@@ -4,7 +4,7 @@ style
   .tax-calculator__fields
     .tax-calculator__field
       label(for='income1') Income #1
-      input#income1(
+      input.tax-calculator__number-field#income1(
         name='income1',
         type='number',
         value=0,
@@ -12,7 +12,7 @@ style
       )
     .tax-calculator__field
       label(for='income2') Income #2
-      input#income2(
+      input.tax-calculator__number-field#income2(
         name='income2',
         type='number',
         value=0,
@@ -20,7 +20,7 @@ style
       )
     .tax-calculator__field
       label(for='children') Children
-      input#children(
+      input.tax-calculator__number-field#children(
         name='children',
         type='number',
         value=0,
@@ -33,16 +33,16 @@ style
         type='checkbox',
         onchange='app.calculate()'
       )
-  table.results
-    thead
-      tr
+  table.tax-calculator-table
+    thead.tax-calculator-table__head
+      tr.tax-calculator-table__title
         th(colspan='4') Results
-      tr
+      tr.tax-calculator-table__headers
         th Value
         th Current Law
         th Clinton
         th Trump
-    tbody#tax-results-body
+    tbody.tax-calculator-table__body#tax-results-body
 
 script
   include ../dist/js/app.js
