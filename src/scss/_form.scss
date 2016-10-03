@@ -1,7 +1,48 @@
 .tax-calculator {
+  border: 1px solid $border-color;
+  border-radius: 4px;
+  box-sizing: border-box;
+  padding: 18px;
+
+  &__fields {
+    background-color: $tf-blue;
+    border: 1px solid $tf-blue;
+    border-radius: 4px;
+    margin: 0 0 16px;
+  }
+
+  &__field {
+    border-bottom: 1px solid white;
+    margin: 0 0 10px;
+    padding: 0 6px 10px;
+
+    &:first-child {
+      padding-top: 10px;
+    }
+
+    &:last-child {
+      border-bottom: 0;
+      padding-bottom: 0;
+    }
+  }
+
+  &__label {
+    color: white;
+    display: block;
+  }
+
   &__number-field {
     -moz-appearance: textfield;
+    background-color: white;
+    border: 0;
+    border-radius: 4px;
+    font-size: 20px;
     text-align: right;
+    width: 100%;
+
+    &:focus {
+      outline: 0;
+    }
 
     &::-webkit-inner-spin-button,
     &::-webkit-outer-spin-button {

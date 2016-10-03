@@ -53,6 +53,7 @@ var app = {
     for (var i = 0, j = app.tableRows.length; i < j; i++) {
       var row = document.createElement('tr');
       row.id = app.tableRows[i].id;
+      row.className = 'tax-calculator-table__body-row';
       document.getElementById('tax-results-body').appendChild(row);
       var label = document.createElement('td');
       label.innerHTML = app.tableRows[i].name;
@@ -153,52 +154,52 @@ var app = {
           app.laws[plan].id +
           '-taxable-income'
         )
-        .innerHTML = '$' + federalTaxableIncome;
+        .innerHTML = Math.round(federalTaxableIncome);
       document.getElementById(
           app.laws[plan].id +
           '-federal-income-tax'
         )
-        .innerHTML = '$' + federalIncomeTax;
+        .innerHTML = Math.round(federalIncomeTax);
       document.getElementById(
           app.laws[plan].id +
           '-ctc'
         )
-        .innerHTML = '$' + childTaxCredit;
+        .innerHTML = Math.round(childTaxCredit);
       document.getElementById(
           app.laws[plan].id +
           '-eitc'
         )
-        .innerHTML = '$' + eitc;
+        .innerHTML = Math.round(eitc);
       document.getElementById(
           app.laws[plan].id +
           '-federal-income-tax-after-credits'
         )
-        .innerHTML = '$' + federalIncomeTaxAfterCredits;
+        .innerHTML = Math.round(federalIncomeTaxAfterCredits);
       document.getElementById(
           app.laws[plan].id +
           '-employee-payroll-tax'
         )
-        .innerHTML = '$' + employeePayrollTax;
+        .innerHTML = Math.round(employeePayrollTax);
       document.getElementById(
           app.laws[plan].id +
           '-tax-burden'
         )
-        .innerHTML = '$' + taxBurden;
+        .innerHTML = Math.round(taxBurden);
       document.getElementById(
           app.laws[plan].id +
           '-employer-payroll-tax'
         )
-        .innerHTML = '$' + employerPayrollTax;
+        .innerHTML = Math.round(employerPayrollTax);
       document.getElementById(
           app.laws[plan].id +
           '-medicare-surtax'
         )
-        .innerHTML = '$' + medicareSurtax;
+        .innerHTML = Math.round(medicareSurtax);
       document.getElementById(
           app.laws[plan].id +
           '-tax-wedge'
         )
-        .innerHTML = '$' + taxWedge;
+        .innerHTML = Math.round(taxWedge);
     }
   },
 };
