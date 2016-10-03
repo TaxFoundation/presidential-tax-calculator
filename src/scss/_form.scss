@@ -34,9 +34,9 @@
   &__number-field {
     -moz-appearance: textfield;
     background-color: white;
-    border: 0;
-    border-radius: 4px;
-    font-size: 20px;
+    border: 0 !important;
+    border-radius: 4px !important;
+    font-size: 20px !important;
     text-align: right;
     width: 100%;
 

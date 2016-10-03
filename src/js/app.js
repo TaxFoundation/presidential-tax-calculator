@@ -56,6 +56,7 @@ var app = {
       row.className = 'tax-calculator-table__body-row';
       document.getElementById('tax-results-body').appendChild(row);
       var label = document.createElement('td');
+      label.className = 'tax-calculator-table__result-row-label'
       label.innerHTML = app.tableRows[i].name;
       document.getElementById(app.tableRows[i].id).appendChild(label);
 
