@@ -23,7 +23,7 @@ var app = {
         id: 'eitc',
       },
       {
-        name: 'Federal Income Tax After Credits',
+        name: 'Fed. Income Tax After Credits',
         id: 'federal-income-tax-after-credits',
       },
       {

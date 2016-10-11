@@ -1,10 +1,7 @@
 %table-cell {
   background-color: transparent;
-  border-bottom: 0;
-  border-left: 0;
-  border-right: 0;
-  border-top: 0;
-  padding: 5px 10px;
+  border: 0;
+  padding: 5px 15px 7px;
 
   &:nth-child(odd),
   &:nth-child(even) {
@@ -22,32 +19,63 @@
   border-collapse: collapse;
   width: 100%;
 
+  &__body {
+
+    tr {
+      &:last-child {
+        background-color: #eee;
+        font-weight: bold;
+        font-size: 20px;
+      }
+    }
+  }
+
   &__head {
-    border-bottom: 1px solid $border-color;
+    border-bottom: 1px solid #ccc;
   }
 
   &__title-text {
     background-color: transparent;
     border: 0;
-    color: black;
+    color: #333;
   }
 
   &__header {
     background-color: transparent;
     border: 0;
-    color: black;
-    padding: 0 0 6px 6px;
+    color: #333;
+    font-size: 16px;
+    font-family: sans-serif;
+    text-align: right;
+    padding: 0 15px 5px 0;
+
+    &:first-child {
+      text-align: left;
+      padding-left: 15px;
+    }
   }
+
+  .tax-wedge {
+    color: blue;
+  }
+
 
   &__result-row-label {
     @extend %table-cell;
+    color: #333;
+    font-size: 16px;
+    font-family: sans-serif;
+    padding-top: 10px;
+    border-bottom: 1px solid #ededed;
   }
 
   &__result {
     @extend %table-cell;
-    border-left: 1px solid $border-color;
+    color: #333;
     font-family: monospace;
+    font-size: 16px;
     text-align: right;
+    border-bottom: 1px solid #ededed;
 
     &::before {
       content: '$';

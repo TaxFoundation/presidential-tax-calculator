@@ -1,9 +1,12 @@
 style
   include ../dist/css/style.css
+.header
+  include ../dist/images/logo.svg
 #app.tax-calculator
+  .tax-calculator__headline How Would the Trump and Clinton Tax Plans Affect You?
   .tax-calculator__fields
     .tax-calculator__field
-      label.tax-calculator__label(for='income1') Income #1
+      label.tax-calculator__label(for='income1') What is your income?
       input.tax-calculator__number-field#income1(
         name='income1',
         type='number',
@@ -12,7 +15,7 @@ style
         onchange='app.calculate()'
       )
     .tax-calculator__field
-      label.tax-calculator__label(for='income2') Income #2
+      label.tax-calculator__label(for='income2') What is your spouse's income?
       input.tax-calculator__number-field#income2(
         name='income2',
         type='number',
@@ -21,7 +24,7 @@ style
         onchange='app.calculate()'
       )
     .tax-calculator__field
-      label.tax-calculator__label(for='children') Children
+      label.tax-calculator__label(for='children') How many dependents do you have?
       input.tax-calculator__number-field#children(
         name='children',
         type='number',
@@ -30,7 +33,7 @@ style
         onchange='app.calculate()'
       )
     .tax-calculator__field
-      label.tax-calculator__label(for='married') Married?
+      label.tax-calculator__label(for='married') Are you married?
       input.tax-calculator__checkbox#married(
         name='married',
         type='checkbox',
@@ -39,9 +42,8 @@ style
   table.tax-calculator-table
     thead.tax-calculator-table__head
       tr.tax-calculator-table__title
-        th.tax-calculator-table__title-text(colspan='4') Results
       tr.tax-calculator-table__headers
-        th.tax-calculator-table__header Value
+        th.tax-calculator-table__header Details and Provisions
         th.tax-calculator-table__header Current Law
         th.tax-calculator-table__header Clinton
         th.tax-calculator-table__header Trump
