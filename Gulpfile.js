@@ -15,7 +15,7 @@ gulp.task('build', ['renderHtml'], function (cb) {
   cb();
 });
 
-gulp.task('renderHtml', ['compileSass', 'moveJavascript'], function () {
+gulp.task('renderHtml', ['compileSass', 'moveJavascript', 'moveImage'], function () {
   gulp.src('./src/**/*.pug')
   // .pipe(data(function (file) {
   //   return yaml.safeLoad(fs.readFileSync('./src/data/plans.yml', 'utf-8'));
@@ -34,6 +34,11 @@ gulp.task('compileSass', function () {
 gulp.task('moveJavascript', function () {
   gulp.src('./src/js/**/*')
   .pipe(gulp.dest('./dist/js/'));
+});
+
+gulp.task('moveImage', function () {
+  gulp.src('./src/images/**/*')
+  .pipe(gulp.dest('./dist/images/'));
 });
 
 gulp.task('webserver', function () {
