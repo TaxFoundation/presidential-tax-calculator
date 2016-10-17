@@ -122,6 +122,7 @@ var app = {
           income1,
           income2,
           children,
+          childrenUnderFive,
           trinaryStatus,
           app.laws[plan],
           0
