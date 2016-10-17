@@ -99,6 +99,7 @@ var app = {
     var maxChildren = isNaN(parseInt(app.children.value)) ? 0 : parseInt(app.children.value);
     if (app.childrenUnderFive.value > maxChildren) {
       app.childrenUnderFive.setAttribute('value', maxChildren);
+      document.getElementById('childrenUnderFiveSelected').innerHTML = maxChildren;
     }
 
     document.getElementById('children5max').innerHTML = maxChildren;
@@ -131,7 +132,7 @@ var app = {
           childrenUnderFive,
           trinaryStatus,
           app.laws[plan],
-          0
+          deductions
         );
       var federalIncomeTax = taxCalculator
         .getFederalIncomeTax(
@@ -276,7 +277,7 @@ var taxCalculator = {
       deduction = taxLaw.standardDeuction[status];
     }
 
-    // Plan-specific deduction calculations
+    // Plan-specific deduction calculations for Trump
     if (taxLaw.id === 'trump') {
       if (status === 'married' && deduction > 200000) {
         deduction = 200000;
@@ -286,6 +287,21 @@ var taxCalculator = {
     }
 
     taxableIncome = Math.max(0, income - deduction - exemption);
+
+    // Plan-specific deduction calculations for Clinton
+    if (taxLaw.id === 'clinton') {
+      var deductionLimit = itemizedDeductions * (1 - 0.19) +
+        Math.min((income1 + income2) * 0.11, 30000);
+
+      var bracket = taxLaw.brackets.filter(function (b) { return b.rate == 0.28; });
+      var limitedIncome = taxableIncome + deductionLimit - bracket[status];
+      var limit = 0;
+      if (limitedIncome > 0) {
+        limit = Math.min(limitedIncome, deductionLimit);
+      }
+
+      taxableIncome = taxableIncome + limit;
+    }
 
     return taxCalculator.roundToHundredths(taxableIncome);
   },
