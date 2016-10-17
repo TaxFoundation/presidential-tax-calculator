@@ -42,18 +42,21 @@ style
         onchange='app.setChildrenUnderFiveRange()'
       )
     .tax-calculator__field
-      label.tax-calculator__label(for='children5') How many children under five years old?
-      label(style='display:inline-block') 0
-      input.tax-calculator__range-field#children5(
-        name='children5',
-        type='range',
-        value=0,
-        min=0,
-        max=0,
-        onchange='app.calculate',
-        style='display:inline-block'
-      )
-      label#children5max(style='display:inline-block') 0
+      label.tax-calculator__label(for='children5') How many dependents are children under five years old?
+      .tax-calculator__range
+        label(style='display:inline-block') 0
+        input.tax-calculator__range-field#children5(
+          name='children5',
+          type='range',
+          value=0,
+          min=0,
+          max=0,
+          onchange='app.setChildrenUnderFiveSelected()',
+          style='display:inline-block'
+        )
+        label#children5max(style='display:inline-block') 0
+      p(style='text-align:center') Children under five: 
+        span#childrenUnderFiveSelected 0
     .tax-calculator__field
       label.tax-calculator__label(for='married') Are you married?
       input.tax-calculator__checkbox#married(
