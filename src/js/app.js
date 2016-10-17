@@ -133,7 +133,7 @@ var app = {
           trinaryStatus,
           app.laws[plan],
           deductions
-        );
+      );
       var federalIncomeTax = taxCalculator
         .getFederalIncomeTax(
           federalTaxableIncome,
@@ -157,10 +157,21 @@ var app = {
           binaryStatus,
           app.laws[plan]
         );
-      var federalIncomeTaxAfterCredits = federalIncomeTax - childTaxCredit - eitc;
       var employeePayrollTax = taxCalculator
         .getFederalEmployeePayrollTax(income1, app.laws[plan]) +
         taxCalculator.getFederalEmployeePayrollTax(income2, app.laws[plan]);
+      var federalIncomeTaxAfterCredits = taxCalculator.getFederalTaxableIncomeAfterCredits(
+        income1,
+        income2,
+        (federalIncomeTax - childTaxCredit - eitc),
+        taxCalculator.getAlternativeMinimumTax(
+          income1,
+          income2,
+          binaryStatus,
+          app.laws[plan]
+        ),
+        employeePayrollTax
+      );
       var taxBurden = federalIncomeTaxAfterCredits + employeePayrollTax;
       var employerPayrollTax = taxCalculator
         .getFederalEmployerPayrollTax(income1, app.laws[plan]) +
@@ -495,6 +506,35 @@ var taxCalculator = {
     } else {
       return 0;
     }
+  },
+
+  getFederalTaxableIncomeAfterCredits: function (
+    income1,
+    income2,
+    federalIncomeTax,
+    alternativeMinimumTax,
+    employeePayrollTax
+  ) {
+    var federalIncomeTax = Math.max(federalIncomeTax, alternativeMinimumTax);
+
+    // Buffett Rule
+    if (taxLaw.id === 'clinton') {
+      var combinedIncome = income1 + income2;
+      var buffett = 0;
+
+      if (combinedIncome > 1000000) {
+        buffett = (
+          combinedIncome * 0.3 *
+          Math.min((combinedIncome - 1000000) / 1000000, 1)
+        )
+      }
+
+      if (federalIncomeTax + employeePayrollTax < buffett && combinedIncome < 2000000) {
+        federalIncomeTax = federalIncomeTax + (buffett - employeePayrollTax);
+      }
+    }
+
+    return federalIncomeTax;
   },
 };
 
