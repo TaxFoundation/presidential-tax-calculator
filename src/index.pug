@@ -58,6 +58,15 @@ style
       p(style='text-align:center') Total children under five: 
         span#childrenUnderFiveSelected 0
     .tax-calculator__field
+      label.tax-calculator__label(for='childcare') How much do you spend on childcare in a year?
+      input.tax-calculator__number-field#childcare(
+        name='childcare',
+        type='number',
+        value=0,
+        onclick='this.select()',
+        oninput='app.calculate()'
+      )
+    .tax-calculator__field
       label.tax-calculator__label(for='married') Are you married?
       input.tax-calculator__checkbox#married(
         name='married',

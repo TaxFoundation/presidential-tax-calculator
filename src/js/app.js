@@ -5,6 +5,7 @@ var app = {
     this.deductions = document.getElementById('deductions');
     this.children = document.getElementById('children');
     this.childrenUnderFive = document.getElementById('children5');
+    this.childcare = document.getElementById('childcare');
     this.married = document.getElementById('married');
 
     this.tableRows = [
@@ -120,6 +121,7 @@ var app = {
     var deductions = isNaN(parseInt(app.deductions.value)) ? 0 : parseInt(app.deductions.value);
     var children = isNaN(parseInt(app.children.value)) ? 0 : parseInt(app.children.value);
     var childrenUnderFive = isNaN(parseInt(app.childrenUnderFive.value)) ? 0 : parseInt(app.childrenUnderFive.value);
+    var childcareExpenses = isNaN(parseInt(app.childcare.value)) ? 0 : parseInt(app.childcare.value);
     var binaryStatus = app.getBinaryStatus(children, app.married.checked);
     var trinaryStatus = app.getTrinaryStatus(children, app.married.checked);
 
@@ -132,7 +134,8 @@ var app = {
           childrenUnderFive,
           trinaryStatus,
           app.laws[plan],
-          deductions
+          deductions,
+          childcareExpenses
       );
       var federalIncomeTax = taxCalculator
         .getFederalIncomeTax(
@@ -242,7 +245,8 @@ var taxCalculator = {
       childrenUnderFive,
       status,
       taxLaw,
-      itemizedDeductions
+      itemizedDeductions,
+      childcareExpenses
     ) {
     var income = income1 + income2;
     var exemption = 0;
@@ -295,6 +299,11 @@ var taxCalculator = {
     }
 
     taxableIncome = Math.max(0, income - deduction - exemption);
+
+    // Plan-specific deduction for Trump
+    if (taxLaw.id === 'trump') {
+      taxableIncome -= childcareExpenses;
+    }
 
     // Plan-specific deduction calculations for Clinton
     if (taxLaw.id === 'clinton') {
