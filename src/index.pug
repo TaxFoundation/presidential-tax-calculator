@@ -39,17 +39,21 @@ style
         type='number',
         value=0,
         onclick='this.select()',
-        onchange='app.calculate()'
+        onchange='app.setChildrenUnderFiveRange()'
       )
     .tax-calculator__field
       label.tax-calculator__label(for='children5') How many children under five years old?
-      input.tax-calculator__number-field#children5(
+      label(style='display:inline-block') 0
+      input.tax-calculator__range-field#children5(
         name='children5',
-        type='number',
+        type='range',
         value=0,
-        onclick='this.select()',
-        onchange='app.calculate()'
+        min=0,
+        max=0,
+        onchange='app.calculate',
+        style='display:inline-block'
       )
+      label#children5max(style='display:inline-block') 0
     .tax-calculator__field
       label.tax-calculator__label(for='married') Are you married?
       input.tax-calculator__checkbox#married(

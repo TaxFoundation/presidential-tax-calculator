@@ -4,6 +4,7 @@ var app = {
     this.income2 = document.getElementById('income2');
     this.deductions = document.getElementById('deductions');
     this.children = document.getElementById('children');
+    this.childrenUnderFive = document.getElementById('children5');
     this.married = document.getElementById('married');
 
     this.tableRows = [
@@ -94,12 +95,16 @@ var app = {
     }
   },
 
-  setEventListeners: function () {
-    app.income1.addEventListener('change', app.calculate());
-    app.income2.addEventListener('change', app.calculate());
-    app.deductions.addEventListener('change', app.calculate());
-    app.children.addEventListener('change', app.calculate());
-    app.married.addEventListener('change', app.calculate());
+  setChildrenUnderFiveRange: function () {
+    var maxChildren = isNaN(parseInt(app.children.value)) ? 0 : parseInt(app.children.value);
+    if (app.childrenUnderFive.value > maxChildren) {
+      app.childrenUnderFive.setAttribute('value', maxChildren);
+    }
+
+    document.getElementById('children5max').innerHTML = maxChildren;
+
+    app.childrenUnderFive.setAttribute('max', maxChildren);
+    app.calculate();
   },
 
   calculate: function () {
@@ -107,6 +112,7 @@ var app = {
     var income2 = isNaN(parseInt(app.income2.value)) ? 0 : parseInt(app.income2.value);
     var deductions = isNaN(parseInt(app.deductions.value)) ? 0 : parseInt(app.deductions.value);
     var children = isNaN(parseInt(app.children.value)) ? 0 : parseInt(app.children.value);
+    var childrenUnderFive = isNaN(parseInt(app.childrenUnderFive.value)) ? 0 : parseInt(app.childrenUnderFive.value);
     var binaryStatus = app.getBinaryStatus(children, app.married.checked);
     var trinaryStatus = app.getTrinaryStatus(children, app.married.checked);
 
@@ -217,6 +223,7 @@ var taxCalculator = {
       income1,
       income2,
       children,
+      childrenUnderFive,
       status,
       taxLaw,
       itemizedDeductions
@@ -260,6 +267,15 @@ var taxCalculator = {
       }
     } else {
       deduction = taxLaw.standardDeuction[status];
+    }
+
+    // Plan-specific deduction calculations
+    if (taxLaw.id === 'trump') {
+      if (status === 'married' && deduction > 200000) {
+        deduction = 200000;
+      } else if (deduction > 100000) {
+        deduction = 100000;
+      }
     }
 
     taxableIncome = Math.max(0, income - deduction - exemption);
