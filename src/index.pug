@@ -24,9 +24,27 @@ style
         onchange='app.calculate()'
       )
     .tax-calculator__field
+      label.tax-calculator__label(for='deductions') How many dollars of itemized deductions will you claim?
+      input.tax-calculator__number-field#deductions(
+        name='deductions',
+        type='number',
+        value=0,
+        onclick='this.select()',
+        onchange='app.calculate()'
+      )
+    .tax-calculator__field
       label.tax-calculator__label(for='children') How many dependents do you have?
       input.tax-calculator__number-field#children(
         name='children',
+        type='number',
+        value=0,
+        onclick='this.select()',
+        onchange='app.calculate()'
+      )
+    .tax-calculator__field
+      label.tax-calculator__label(for='children5') How many children under five years old?
+      input.tax-calculator__number-field#children5(
+        name='children5',
         type='number',
         value=0,
         onclick='this.select()',
