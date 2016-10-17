@@ -163,13 +163,9 @@ var app = {
       var federalIncomeTaxAfterCredits = taxCalculator.getFederalTaxableIncomeAfterCredits(
         income1,
         income2,
+        binaryStatus,
         (federalIncomeTax - childTaxCredit - eitc),
-        taxCalculator.getAlternativeMinimumTax(
-          income1,
-          income2,
-          binaryStatus,
-          app.laws[plan]
-        ),
+        app.laws[plan],
         employeePayrollTax
       );
       var taxBurden = federalIncomeTaxAfterCredits + employeePayrollTax;
@@ -511,11 +507,20 @@ var taxCalculator = {
   getFederalTaxableIncomeAfterCredits: function (
     income1,
     income2,
+    status,
     federalIncomeTax,
-    alternativeMinimumTax,
+    taxLaw,
     employeePayrollTax
   ) {
-    var federalIncomeTax = Math.max(federalIncomeTax, alternativeMinimumTax);
+    var federalIncomeTax = Math.max(
+      federalIncomeTax,
+      taxCalculator.getAlternativeMinimumTax(
+        income1,
+        income2,
+        status,
+        taxLaw
+      )
+    );
 
     // Buffett Rule
     if (taxLaw.id === 'clinton') {
