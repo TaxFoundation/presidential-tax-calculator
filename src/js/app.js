@@ -319,6 +319,11 @@ var taxCalculator = {
       }
     }
 
+    // Clinton surtax on income over $5m
+    if (taxLaw.id === 'clinton' && taxableIncome > 5000000) {
+      federalIncomeTax += (taxableIncome - 5000000) * 0.04;
+    }
+
     return taxCalculator.roundToHundredths(federalIncomeTax);
   },
 
