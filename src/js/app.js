@@ -2,6 +2,7 @@ var app = {
   init: function () {
     this.income1 = document.getElementById('income1');
     this.income2 = document.getElementById('income2');
+    this.deductions = document.getElementById('deductions');
     this.children = document.getElementById('children');
     this.married = document.getElementById('married');
 
@@ -96,6 +97,7 @@ var app = {
   setEventListeners: function () {
     app.income1.addEventListener('change', app.calculate());
     app.income2.addEventListener('change', app.calculate());
+    app.deductions.addEventListener('change', app.calculate());
     app.children.addEventListener('change', app.calculate());
     app.married.addEventListener('change', app.calculate());
   },
@@ -103,6 +105,7 @@ var app = {
   calculate: function () {
     var income1 = isNaN(parseInt(app.income1.value)) ? 0 : parseInt(app.income1.value);
     var income2 = isNaN(parseInt(app.income2.value)) ? 0 : parseInt(app.income2.value);
+    var deductions = isNaN(parseInt(app.deductions.value)) ? 0 : parseInt(app.deductions.value);
     var children = isNaN(parseInt(app.children.value)) ? 0 : parseInt(app.children.value);
     var binaryStatus = app.getBinaryStatus(children, app.married.checked);
     var trinaryStatus = app.getTrinaryStatus(children, app.married.checked);
