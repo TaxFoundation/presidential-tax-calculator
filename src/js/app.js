@@ -294,7 +294,7 @@ var taxCalculator = {
       var deductionLimit = itemizedDeductions * (1 - 0.19) +
         Math.min((income1 + income2) * 0.11, 30000);
 
-      var bracket = taxLaw.brackets.filter(function (b) { return b.rate == 0.28; });
+      var bracket = taxLaw.brackets.filter(function (b) { return b.rate == 0.33; });
       var limitedIncome = taxableIncome + deductionLimit - bracket[status];
       var limit = 0;
       if (limitedIncome > 0) {
@@ -370,13 +370,13 @@ var taxCalculator = {
         } else if (income <= taxLaw.ctc.phaseout[status]) {
           childTaxCredit = Math.min(
             taxLaw.ctc.credit *
-            childrenUnderFive * 2,
+            childrenUnderFive,
             income * 0.45
           );
         } else if (income > taxLaw.ctc.phaseout[status]) {
           childTaxCredit = Math.max(
             0,
-            (taxLaw.ctc.credit * childrenUnderFive * 2) -
+            (taxLaw.ctc.credit * childrenUnderFive) -
             (
               Math.ceil(
                 (income - taxLaw.ctc.phaseout[status]) * 0.001
@@ -843,7 +843,7 @@ var taxLaws = [
       income: 7000,
     },
     ctc: {
-      credit: 1000,
+      credit: 2000,
       phaseIn: 3000,
       phaseInRate: 0.15,
       phaseout: {
