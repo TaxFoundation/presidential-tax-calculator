@@ -377,45 +377,24 @@ var taxCalculator = {
       taxLaw
     ) {
     var income = income1 + income2;
+    var olderChildren = children;
     var childTaxCredit = 0;
 
     if (taxLaw.id === 'clinton') {
+      olderChildren = children - childrenUnderFive;
       if (childrenUnderFive > 0) {
         if (income <= 0) {
           childTaxCredit = 0;
         } else if (income <= taxLaw.ctc.phaseout[status]) {
           childTaxCredit = Math.min(
-            taxLaw.ctc.credit *
+            taxLaw.ctc.credit * 2 *
             childrenUnderFive,
             income * 0.45
           );
         } else if (income > taxLaw.ctc.phaseout[status]) {
           childTaxCredit = Math.max(
             0,
-            (taxLaw.ctc.credit * childrenUnderFive) -
-            (
-              Math.ceil(
-                (income - taxLaw.ctc.phaseout[status]) * 0.001
-              ) * 1000
-            ) * taxLaw.ctc.phaseoutRate
-          );
-        }
-      }
-    } else {
-      if (children > 0) {
-        if (income <= taxLaw.ctc.phaseIn) {
-          childTaxCredit = 0;
-        } else if (income <= taxLaw.ctc.phaseout[status]) {
-          childTaxCredit = Math.min(
-            taxLaw.ctc.credit *
-            children,
-            (income - taxLaw.ctc.phaseIn) *
-            taxLaw.ctc.phaseInRate
-          );
-        } else if (income > taxLaw.ctc.phaseout[status]) {
-          childTaxCredit = Math.max(
-            0,
-            (taxLaw.ctc.credit * children) -
+            (taxLaw.ctc.credit * 2 * childrenUnderFive) -
             (
               Math.ceil(
                 (income - taxLaw.ctc.phaseout[status]) * 0.001
@@ -426,6 +405,28 @@ var taxCalculator = {
       }
     }
 
+    if (olderChildren > 0) {
+      if (income <= taxLaw.ctc.phaseIn) {
+        childTaxCredit += 0;
+      } else if (income <= taxLaw.ctc.phaseout[status]) {
+        childTaxCredit += Math.min(
+          taxLaw.ctc.credit *
+          olderChildren,
+          (income - taxLaw.ctc.phaseIn) *
+          taxLaw.ctc.phaseInRate
+        );
+      } else if (income > taxLaw.ctc.phaseout[status]) {
+        childTaxCredit += Math.max(
+          0,
+          (taxLaw.ctc.credit * olderChildren) -
+          (
+            Math.ceil(
+              (income - taxLaw.ctc.phaseout[status]) * 0.001
+            ) * 1000
+          ) * taxLaw.ctc.phaseoutRate
+        );
+      }
+    }
 
     return taxCalculator.roundToHundredths(childTaxCredit);
   },
@@ -897,7 +898,7 @@ var taxLaws = [
       income: 7000,
     },
     ctc: {
-      credit: 2000,
+      credit: 1000,
       phaseIn: 3000,
       phaseInRate: 0.15,
       phaseout: {
