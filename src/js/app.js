@@ -320,7 +320,7 @@ var taxCalculator = {
       taxableIncome = taxableIncome + limit;
     }
 
-    return taxCalculator.roundToHundredths(taxableIncome);
+    return taxCalculator.roundToHundredths(Math.max(taxableIncome, 0));
   },
 
   getFederalIncomeTax: function (taxableIncome, status, taxLaw) {
