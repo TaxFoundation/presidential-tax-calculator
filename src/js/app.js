@@ -291,6 +291,10 @@ var taxCalculator = {
 
     // Plan-specific deduction calculations for Trump
     if (taxLaw.id === 'trump') {
+      // Reset deduction, undoing potential application of Pease limits earlier
+      deduction = Math.max(taxLaw.standardDeuction[status], itemizedDeductions);
+
+      // Apply deduction cap if applicable
       if (status === 'married' && deduction > 200000) {
         deduction = 200000;
       } else if (deduction > 100000) {
