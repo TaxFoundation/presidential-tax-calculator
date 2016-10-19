@@ -30,7 +30,14 @@ style
        type='checkbox',    
        onchange='app.calculate()'    
      )
-    .tax-calculator__field
+    .tax-calculator__field   
+     label.tax-calculator__label(for='deductions-tick') Will you itemize deductions?   
+     input.tax-calculator__checkbox#deductions-tick(   
+       name='deductions-tick',   
+       type='checkbox',    
+       onchange='app.toggleItemizedDeductions()'    
+     )
+    .tax-calculator__field.tax-calculator__field--hidden#deductions-field
       label.tax-calculator__label(for='deductions') How many dollars of itemized deductions will you claim?
       input.tax-calculator__number-field#deductions(
         name='deductions',

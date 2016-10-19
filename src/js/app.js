@@ -124,6 +124,11 @@ var app = {
     app.calculate();
   },
 
+  toggleItemizedDeductions: function () {
+    document.getElementById('deductions-field')
+      .classList.toggle('tax-calculator__field--hidden');
+  },
+
   calculate: function () {
     var income1 = isNaN(parseInt(app.income1.value)) ? 0 : parseInt(app.income1.value);
     var income2 = isNaN(parseInt(app.income2.value)) ? 0 : parseInt(app.income2.value);
