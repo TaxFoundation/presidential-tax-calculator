@@ -567,7 +567,7 @@ var taxCalculator = {
         taxLaw.amt[status].phaseout) * 0.25
       );
 
-      var income = combinedIncome - (itemizedDeductions * 0.96)  - Math.max(
+      var income = combinedIncome - (itemizedDeductions - (combinedIncome * 0.04))  - Math.max(
         0,
         taxLaw.amt[status].exemption - exemptionPhaseout
       );
