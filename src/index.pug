@@ -23,6 +23,13 @@ style
         onclick='this.select()',
         oninput='app.calculate()'
       )
+    .tax-calculator__field   
+     label.tax-calculator__label(for='married') Are you married?   
+     input.tax-calculator__checkbox#married(   
+       name='married',   
+       type='checkbox',    
+       onchange='app.calculate()'    
+     )
     .tax-calculator__field
       label.tax-calculator__label(for='deductions') How many dollars of itemized deductions will you claim?
       input.tax-calculator__number-field#deductions(

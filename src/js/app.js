@@ -75,7 +75,7 @@ var app = {
   },
 
   getBinaryStatus: function (income1, income2, children) {
-    if (income1 > 0 && income2 > 0) {
+    if ((income1 > 0 && income2 > 0) || app.married.checked) {
       return 'married';
     } else {
       return 'single';
@@ -83,7 +83,7 @@ var app = {
   },
 
   getTrinaryStatus: function (income1, income2, children) {
-    if (income1 > 0 && income2 > 0) {
+    if ((income1 > 0 && income2 > 0) || app.married.checked) {
       return 'married';
     } else if (children > 0) {
       return 'hoh';
@@ -131,6 +131,10 @@ var app = {
     var childcareExpenses = isNaN(parseInt(app.childcare.value)) ? 0 : parseInt(app.childcare.value);
     var binaryStatus = app.getBinaryStatus(income1, income2, children);
     var trinaryStatus = app.getTrinaryStatus(income1, income2, children);
+
+    if (income1 > 0 && income2 > 0 && !app.married.checked) {
+      app.married.checked = true;
+    }
 
     for (var plan = 0, j = app.laws.length; plan < j; plan++) {
       var federalTaxableIncome = taxCalculator
@@ -191,7 +195,7 @@ var app = {
         app.laws[plan],
         employeePayrollTax
       );
-      
+
       var taxBurden = federalIncomeTaxAfterCredits + employeePayrollTax;
 
       var employerPayrollTax = taxCalculator
