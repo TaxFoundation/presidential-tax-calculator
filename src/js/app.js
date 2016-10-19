@@ -321,11 +321,12 @@ var taxCalculator = {
       if ((income1 + income2) > 250000 * statusSwitch) {
         childcare = Math.max(
           0,
-          1 - (
-            (income1 + income2) -
-            (250000 * statusSwitch) /
-            (50000 * statusSwitch * childcare)
-          )
+          (1 - 
+            (
+              (income1 + income2) -
+              (250000 * statusSwitch)
+            ) / 50000
+          ) * childcare
         );
       }
 
