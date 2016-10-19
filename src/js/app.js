@@ -554,11 +554,8 @@ var taxCalculator = {
       var amt = 0;
 
       for (var i = taxLaw.amt.brackets.length - 1, j = -1; i > j; i--) {
-        if (income > taxLaw.amt.brackets[i].income) {
-          amt = amt +
-            (
-              (income - taxLaw.amt.brackets[i].income) * taxLaw.amt.brackets[i].rate
-            );
+        if (income < taxLaw.amt.brackets[i].income) {
+          amt += (income - taxLaw.amt.brackets[i].income) * taxLaw.amt.brackets[i].rate;
           income = taxLaw.amt.brackets[i].income;
         }
       }
