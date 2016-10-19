@@ -197,6 +197,7 @@ var app = {
       var federalIncomeTaxAfterCredits = taxCalculator.getFederalTaxableIncomeAfterCredits(
         income1,
         income2,
+        deductions,
         binaryStatus,
         (federalIncomeTax - childTaxCredit - eitc),
         app.laws[plan],
@@ -557,7 +558,7 @@ var taxCalculator = {
     return taxCalculator.roundToHundredths(medicareSurtax);
   },
 
-  getAlternativeMinimumTax: function (income1, income2, status, taxLaw) {
+  getAlternativeMinimumTax: function (income1, income2, itemizedDeductions, status, taxLaw) {
     if (taxLaw.amt) {
       var combinedIncome = income1 + income2;
       var exemptionPhaseout = Math.max(
@@ -566,7 +567,7 @@ var taxCalculator = {
         taxLaw.amt[status].phaseout) * 0.25
       );
 
-      var income = combinedIncome - Math.max(
+      var income = combinedIncome - (itemizedDeductions * 0.96)  - Math.max(
         0,
         taxLaw.amt[status].exemption - exemptionPhaseout
       );
@@ -588,6 +589,7 @@ var taxCalculator = {
   getFederalTaxableIncomeAfterCredits: function (
     income1,
     income2,
+    itemizedDeductions,
     status,
     federalIncomeTax,
     taxLaw,
@@ -596,6 +598,7 @@ var taxCalculator = {
     var amt = taxCalculator.getAlternativeMinimumTax(
       income1,
       income2,
+      itemizedDeductions,
       status,
       taxLaw
     );
