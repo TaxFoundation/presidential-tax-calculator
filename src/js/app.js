@@ -204,7 +204,7 @@ var app = {
         .getFederalEmployerPayrollTax(income1, app.laws[plan]) +
         taxCalculator.getFederalEmployerPayrollTax(income2, app.laws[plan]);
 
-      var taxWedge = taxBurden + employerPayrollTax + medicareSurtax;
+      var taxWedge = taxBurden + employerPayrollTax;
 
       document.getElementById(
           app.laws[plan].id +
