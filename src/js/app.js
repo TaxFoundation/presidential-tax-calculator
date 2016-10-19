@@ -139,6 +139,9 @@ var app = {
       );
       var federalIncomeTax = taxCalculator
         .getFederalIncomeTax(
+          income1,
+          income2,
+          deductions,
           federalTaxableIncome,
           trinaryStatus,
           app.laws[plan]
@@ -279,9 +282,12 @@ var taxCalculator = {
 
     if (itemizedDeductions > taxLaw.standardDeuction[status]) {
       if (income > taxLaw.pepPease.threshold[status]) {
-        deduction = itemizedDeductions -
+        deduction = Math.max(
+          itemizedDeductions -
           (income - taxLaw.pepPease.threshold[status]) *
-          0.02;
+          0.03,
+          itemizedDeductions * 0.2
+        );
       } else {
         deduction = itemizedDeductions;
       }
@@ -309,27 +315,30 @@ var taxCalculator = {
       taxableIncome -= childcareExpenses;
     }
 
-    // Plan-specific deduction calculations for Clinton
+    return taxCalculator.roundToHundredths(Math.max(taxableIncome, 0));
+  },
+
+  getFederalIncomeTax: function (income1, income2, itemizedDeductions, taxableIncome, status, taxLaw) {
+    var income = taxableIncome;
+    var limit = 0;
+    var federalIncomeTax = 0;
+
+    
+
+        // Plan-specific deduction calculations for Clinton
     if (taxLaw.id === 'clinton') {
+      // Assume 81% of deductions and healthcare of 11% or 30k
       var deductionLimit = itemizedDeductions * (1 - 0.19) +
         Math.min((income1 + income2) * 0.11, 30000);
 
-      var bracket = taxLaw.brackets.filter(function (b) { return b.rate == 0.33; });
+      var bracket = taxLaw.brackets.filter(function (b) { return b.rate == 0.33; })[0];
       var limitedIncome = taxableIncome + deductionLimit - bracket[status];
-      var limit = 0;
       if (limitedIncome > 0) {
         limit = Math.min(limitedIncome, deductionLimit);
       }
 
-      taxableIncome = taxableIncome + limit;
+      income = taxableIncome + limit;
     }
-
-    return taxCalculator.roundToHundredths(Math.max(taxableIncome, 0));
-  },
-
-  getFederalIncomeTax: function (taxableIncome, status, taxLaw) {
-    var income = taxableIncome;
-    var federalIncomeTax = 0;
 
     // Loop through brackets backward for ease of calculation
     for (var i = taxLaw.brackets.length - 1, j = -1; i > j; i--) {
@@ -338,6 +347,10 @@ var taxCalculator = {
           ((income - taxLaw.brackets[i][status]) * taxLaw.brackets[i].rate);
         income = taxLaw.brackets[i][status];
       }
+    }
+
+    if (taxLaw.id === 'clinton') {
+      federalIncomeTax -= (limit * 0.28);
     }
 
     // Clinton surtax on income over $5m
@@ -356,9 +369,9 @@ var taxCalculator = {
 
     if (income < theEITC.threshold) {
       earnedIncomeTaxCredit = income *
-        (theEITC.maxIncome[status] / theEITC.threshold);
+        (theEITC.max / theEITC.threshold);
     } else if (income >= theEITC.threshold && income <= theEITC.phaseout[status]) {
-      earnedIncomeTaxCredit = theEITC.maxIncome[status];
+      earnedIncomeTaxCredit = theEITC.max;
     } else if (income > theEITC.phaseout[status]) {
       earnedIncomeTaxCredit = Math.max(
         0,
@@ -502,13 +515,13 @@ var taxCalculator = {
       );
       var amt = 0;
 
-      for (var i = taxLaw.amt.length - 1, j = -1; i > j; i--) {
-        if (income > taxLaw.amt[i].income) {
+      for (var i = taxLaw.amt.brackets.length - 1, j = -1; i > j; i--) {
+        if (income > taxLaw.amt.brackets[i].income) {
           amt = amt +
             (
-              (income - taxLaw.amt[i].income) * taxLaw.amt[i].rate
+              (income - taxLaw.amt.brackets[i].income) * taxLaw.amt.brackets[i].rate
             );
-          income = taxLaw.amt[i].income;
+          income = taxLaw.amt.brackets[i].income;
         }
       }
 
@@ -903,7 +916,7 @@ var taxLaws = [
     },
     ctc: {
       credit: 1000,
-      phaseIn: 3000,
+      phaseIn: 0,
       phaseInRate: 0.15,
       phaseout: {
         single: 75000,
