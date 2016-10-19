@@ -34,16 +34,12 @@ var app = {
         id: 'employee-payroll-tax',
       },
       {
-        name: 'Tax Burden',
-        id: 'tax-burden',
-      },
-      {
         name: 'Employer Payroll Tax',
         id: 'employer-payroll-tax',
       },
       {
-        name: 'Tax Wedge',
-        id: 'tax-wedge',
+        name: 'Total Tax Burden',
+        id: 'tax-burden',
       },
     ];
 
@@ -236,17 +232,12 @@ var app = {
         .innerHTML = Math.round(employeePayrollTax);
       document.getElementById(
           app.laws[plan].id +
-          '-tax-burden'
-        )
-        .innerHTML = Math.round(taxBurden);
-      document.getElementById(
-          app.laws[plan].id +
           '-employer-payroll-tax'
         )
         .innerHTML = Math.round(employerPayrollTax);
       document.getElementById(
           app.laws[plan].id +
-          '-tax-wedge'
+          '-tax-burden'
         )
         .innerHTML = Math.round(taxWedge);
     }
@@ -399,6 +390,7 @@ var taxCalculator = {
     var dependents = Math.min(3, children);
     var theEITC = taxLaw.eitc[dependents];
     var earnedIncomeTaxCredit = 0;
+    var trumpEITC = 0;
 
     if (taxLaw.id === 'trump') {
       var lowestIncome = income1;
@@ -408,12 +400,12 @@ var taxCalculator = {
       }
 
       if ((income1 + income2) <= (15686.27 * statusSwitch)) {
-        earnedIncomeTaxCredit = Math.min(childcare * 0.0765, lowestIncome * 0.0765);
+        trumpEITC = Math.min(childcare * 0.0765, lowestIncome * 0.0765);
       } else {
-        earnedIncomeTaxCredit = Math.min(childcare * 0.0765, lowestIncome * 0.0765);
-        earnedIncomeTaxCredit = Math.max(
+        trumpEITC = Math.min(childcare * 0.0765, lowestIncome * 0.0765);
+        trumpEITC = Math.max(
           0,
-          earnedIncomeTaxCredit -
+          trumpEITC -
           ((income1 + income2) - (15686.27 * statusSwitch)) * 0.0765
         );
       }
@@ -434,7 +426,7 @@ var taxCalculator = {
       );
     }
 
-    return taxCalculator.roundToHundredths(earnedIncomeTaxCredit);
+    return taxCalculator.roundToHundredths(earnedIncomeTaxCredit + trumpEITC);
   },
 
   getFederalChildTaxCredit: function (
