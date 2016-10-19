@@ -171,9 +171,12 @@ var app = {
           binaryStatus,
           app.laws[plan]
         );
+      var medicareSurtax = taxCalculator
+        .getMedicareSurtax(income1, income2, binaryStatus, app.laws[plan]);
       var employeePayrollTax = taxCalculator
         .getFederalEmployeePayrollTax(income1, app.laws[plan]) +
-        taxCalculator.getFederalEmployeePayrollTax(income2, app.laws[plan]);
+        taxCalculator.getFederalEmployeePayrollTax(income2, app.laws[plan]) +
+        medicareSurtax;
       var federalIncomeTaxAfterCredits = taxCalculator.getFederalTaxableIncomeAfterCredits(
         income1,
         income2,
@@ -183,12 +186,9 @@ var app = {
         employeePayrollTax
       );
       var taxBurden = federalIncomeTaxAfterCredits + employeePayrollTax;
-      var medicareSurtax = taxCalculator
-        .getMedicareSurtax(income1, income2, binaryStatus, app.laws[plan]);
       var employerPayrollTax = taxCalculator
         .getFederalEmployerPayrollTax(income1, app.laws[plan]) +
-        taxCalculator.getFederalEmployerPayrollTax(income2, app.laws[plan]) +
-        medicareSurtax;
+        taxCalculator.getFederalEmployerPayrollTax(income2, app.laws[plan]);
       var taxWedge = taxBurden + employerPayrollTax + medicareSurtax;
 
       document.getElementById(
@@ -404,21 +404,21 @@ var taxCalculator = {
           ((income1 + income2) - (15686.27 * statusSwitch)) * 0.0765
         );
       }
-    } else {
-      if (income < theEITC.threshold) {
-        earnedIncomeTaxCredit = income *
-          (theEITC.max / theEITC.threshold);
-      } else if (income >= theEITC.threshold && income <= theEITC.phaseout[status]) {
-        earnedIncomeTaxCredit = theEITC.max;
-      } else if (income > theEITC.phaseout[status]) {
-        earnedIncomeTaxCredit = Math.max(
-          0,
-          theEITC.max + (
-            (theEITC.phaseout[status] - income) *
-            (theEITC.max / (theEITC.maxIncome[status] - theEITC.phaseout[status]))
-          )
-        );
-      }
+    } 
+
+    if (income < theEITC.threshold) {
+      earnedIncomeTaxCredit = income *
+        (theEITC.max / theEITC.threshold);
+    } else if (income >= theEITC.threshold && income <= theEITC.phaseout[status]) {
+      earnedIncomeTaxCredit = theEITC.max;
+    } else if (income > theEITC.phaseout[status]) {
+      earnedIncomeTaxCredit = Math.max(
+        0,
+        theEITC.max + (
+          (theEITC.phaseout[status] - income) *
+          (theEITC.max / (theEITC.maxIncome[status] - theEITC.phaseout[status]))
+        )
+      );
     }
 
     return taxCalculator.roundToHundredths(earnedIncomeTaxCredit);
@@ -543,19 +543,21 @@ var taxCalculator = {
 
   getAlternativeMinimumTax: function (income1, income2, status, taxLaw) {
     if (taxLaw.amt) {
-      var income = (income1 + income2) - Math.max(
+      var combinedIncome = income1 + income2;
+      var exemptionPhaseout = Math.max(
         0,
-        taxLaw.amt[status].exemption -
-        Math.max(
-          0,
-          (income1 + income2) -
-          taxLaw.amt[status].phaseout * 0.25
-        )
+        (combinedIncome -
+        taxLaw.amt[status].phaseout) * 0.25
+      );
+
+      var income = combinedIncome - Math.max(
+        0,
+        taxLaw.amt[status].exemption - exemptionPhaseout
       );
       var amt = 0;
 
       for (var i = taxLaw.amt.brackets.length - 1, j = -1; i > j; i--) {
-        if (income < taxLaw.amt.brackets[i].income) {
+        if (income > taxLaw.amt.brackets[i].income) {
           amt += (income - taxLaw.amt.brackets[i].income) * taxLaw.amt.brackets[i].rate;
           income = taxLaw.amt.brackets[i].income;
         }
@@ -575,14 +577,16 @@ var taxCalculator = {
     taxLaw,
     employeePayrollTax
   ) {
+    var amt = taxCalculator.getAlternativeMinimumTax(
+      income1,
+      income2,
+      status,
+      taxLaw
+    );
+    console.log(amt);
     var federalIncomeTax = Math.max(
       federalIncomeTax,
-      taxCalculator.getAlternativeMinimumTax(
-        income1,
-        income2,
-        status,
-        taxLaw
-      )
+      amt
     );
 
     // Buffett Rule
@@ -1015,7 +1019,7 @@ var taxLaws = [
         rate: 0.33,
         single: 112500,
         married: 225000,
-        hoh: 75000,
+        hoh: 112500,
       },
     ],
     eitc: {
