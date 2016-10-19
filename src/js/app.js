@@ -74,16 +74,16 @@ var app = {
     app.calculate();
   },
 
-  getBinaryStatus: function (children, married) {
-    if (married) {
+  getBinaryStatus: function (income1, income2, children) {
+    if (income1 > 0 && income2 > 0) {
       return 'married';
     } else {
       return 'single';
     }
   },
 
-  getTrinaryStatus: function (children, married) {
-    if (married) {
+  getTrinaryStatus: function (income1, income2, children) {
+    if (income1 > 0 && income2 > 0) {
       return 'married';
     } else if (children > 0) {
       return 'hoh';
@@ -129,8 +129,8 @@ var app = {
     var children = isNaN(parseInt(app.children.value)) ? 0 : parseInt(app.children.value);
     var childrenUnderFive = isNaN(parseInt(app.childrenUnderFive.value)) ? 0 : parseInt(app.childrenUnderFive.value);
     var childcareExpenses = isNaN(parseInt(app.childcare.value)) ? 0 : parseInt(app.childcare.value);
-    var binaryStatus = app.getBinaryStatus(children, app.married.checked);
-    var trinaryStatus = app.getTrinaryStatus(children, app.married.checked);
+    var binaryStatus = app.getBinaryStatus(income1, income2, children);
+    var trinaryStatus = app.getTrinaryStatus(income1, income2, children);
 
     for (var plan = 0, j = app.laws.length; plan < j; plan++) {
       var federalTaxableIncome = taxCalculator
