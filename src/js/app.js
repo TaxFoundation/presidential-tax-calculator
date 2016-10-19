@@ -167,6 +167,7 @@ var app = {
           income1,
           income2,
           children,
+          childcareExpenses,
           binaryStatus,
           app.laws[plan]
         );
@@ -379,25 +380,44 @@ var taxCalculator = {
     return taxCalculator.roundToHundredths(federalIncomeTax);
   },
 
-  getFederalEITC: function (income1, income2, children, status, taxLaw) {
+  getFederalEITC: function (income1, income2, children, childcare, status, taxLaw) {
     var income = income1 + income2;
     var dependents = Math.min(3, children);
     var theEITC = taxLaw.eitc[dependents];
     var earnedIncomeTaxCredit = 0;
 
-    if (income < theEITC.threshold) {
-      earnedIncomeTaxCredit = income *
-        (theEITC.max / theEITC.threshold);
-    } else if (income >= theEITC.threshold && income <= theEITC.phaseout[status]) {
-      earnedIncomeTaxCredit = theEITC.max;
-    } else if (income > theEITC.phaseout[status]) {
-      earnedIncomeTaxCredit = Math.max(
-        0,
-        theEITC.max + (
-          (theEITC.phaseout[status] - income) *
-          (theEITC.max / (theEITC.maxIncome[status] - theEITC.phaseout[status]))
-        )
-      );
+    if (taxLaw.id === 'trump') {
+      var lowestIncome = income1;
+      var statusSwitch = (status == 'married' ? 2 : 1);
+      if (income1 > 0 && income2 > 0) {
+        lowestIncome = Math.min(income1, income2);
+      }
+
+      if ((income1 + income2) <= (15686.27 * statusSwitch)) {
+        earnedIncomeTaxCredit = Math.min(childcare * 0.0765, lowestIncome * 0.0765);
+      } else {
+        earnedIncomeTaxCredit = Math.min(childcare * 0.0765, lowestIncome * 0.0765);
+        earnedIncomeTaxCredit = Math.max(
+          0,
+          earnedIncomeTaxCredit -
+          ((income1 + income2) - (15686.27 * statusSwitch)) * 0.0765
+        );
+      }
+    } else {
+      if (income < theEITC.threshold) {
+        earnedIncomeTaxCredit = income *
+          (theEITC.max / theEITC.threshold);
+      } else if (income >= theEITC.threshold && income <= theEITC.phaseout[status]) {
+        earnedIncomeTaxCredit = theEITC.max;
+      } else if (income > theEITC.phaseout[status]) {
+        earnedIncomeTaxCredit = Math.max(
+          0,
+          theEITC.max + (
+            (theEITC.phaseout[status] - income) *
+            (theEITC.max / (theEITC.maxIncome[status] - theEITC.phaseout[status]))
+          )
+        );
+      }
     }
 
     return taxCalculator.roundToHundredths(earnedIncomeTaxCredit);
