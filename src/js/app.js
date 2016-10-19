@@ -94,6 +94,17 @@ var app = {
 
   setChildrenUnderFiveRange: function () {
     var maxChildren = isNaN(parseInt(app.children.value)) ? 0 : parseInt(app.children.value);
+    var underFive = document.getElementById('children-under-five-field');
+    var childcare = document.getElementById('childcare-field');
+
+    if (maxChildren > 0 && underFive.classList.contains('tax-calculator__field--hidden')) {
+      underFive.classList.remove('tax-calculator__field--hidden');
+      childcare.classList.remove('tax-calculator__field--hidden');
+    } else if (!underFive.classList.contains('tax-calculator__field--hidden')) {
+      underFive.classList.add('tax-calculator__field--hidden');
+      childcare.classList.add('tax-calculator__field--hidden');
+    }
+
     if (app.childrenUnderFive.value > maxChildren) {
       app.childrenUnderFive.setAttribute('value', maxChildren);
       document.getElementById('childrenUnderFiveSelected').innerHTML = maxChildren;
@@ -304,7 +315,22 @@ var taxCalculator = {
 
     // Plan-specific deduction for Trump
     if (taxLaw.id === 'trump') {
-      taxableIncome -= childcareExpenses;
+      var childcare = childcareExpenses;
+      var statusSwitch = (status == 'married' ? 2 : 1);
+      if ((income1 + income2) > 250000 * statusSwitch) {
+        childcare = Math.max(
+          0,
+          1 - (
+            (income1 + income2) -
+            (250000 * statusSwitch) /
+            (50000 * statusSwitch * childcare)
+          )
+        );
+      }
+
+      childcare = Math.min(18000, childcare);
+
+      taxableIncome -= childcare;
     }
 
     return taxCalculator.roundToHundredths(Math.max(taxableIncome, 0));

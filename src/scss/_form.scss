@@ -34,10 +34,19 @@
   &__field {
     margin: 0 20px 10px;
     padding: 8px;
+    transition: height .4s ease-in, opacity .4s ease-in;
 
     &:last-child {
       border-bottom: 0;
       padding-bottom: 20px;
+    }
+
+    &--hidden {
+      height: 0;
+      margin: 0;
+      opacity: 0;
+      padding: 0;
+      visibility: hidden;
     }
   }
 
@@ -91,3 +100,4 @@
     margin: 0 10px;
   }
 }
+
