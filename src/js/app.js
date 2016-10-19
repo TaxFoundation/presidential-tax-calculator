@@ -144,6 +144,7 @@ var app = {
           deductions,
           childcareExpenses
       );
+
       var federalIncomeTax = taxCalculator
         .getFederalIncomeTax(
           income1,
@@ -153,6 +154,7 @@ var app = {
           trinaryStatus,
           app.laws[plan]
         );
+
       var childTaxCredit = taxCalculator
         .getFederalChildTaxCredit(
           income1,
@@ -162,6 +164,7 @@ var app = {
           binaryStatus,
           app.laws[plan]
         );
+
       var eitc = taxCalculator
         .getFederalEITC(
           income1,
@@ -171,12 +174,15 @@ var app = {
           binaryStatus,
           app.laws[plan]
         );
+
       var medicareSurtax = taxCalculator
         .getMedicareSurtax(income1, income2, binaryStatus, app.laws[plan]);
+
       var employeePayrollTax = taxCalculator
         .getFederalEmployeePayrollTax(income1, app.laws[plan]) +
         taxCalculator.getFederalEmployeePayrollTax(income2, app.laws[plan]) +
         medicareSurtax;
+
       var federalIncomeTaxAfterCredits = taxCalculator.getFederalTaxableIncomeAfterCredits(
         income1,
         income2,
@@ -185,10 +191,13 @@ var app = {
         app.laws[plan],
         employeePayrollTax
       );
+      
       var taxBurden = federalIncomeTaxAfterCredits + employeePayrollTax;
+
       var employerPayrollTax = taxCalculator
         .getFederalEmployerPayrollTax(income1, app.laws[plan]) +
         taxCalculator.getFederalEmployerPayrollTax(income2, app.laws[plan]);
+
       var taxWedge = taxBurden + employerPayrollTax + medicareSurtax;
 
       document.getElementById(
@@ -583,11 +592,10 @@ var taxCalculator = {
       status,
       taxLaw
     );
-    console.log(amt);
-    var federalIncomeTax = Math.max(
+    var federalIncomeTax = (federalIncomeTax < 0 ? federalIncomeTax : Math.max(
       federalIncomeTax,
       amt
-    );
+    ));
 
     // Buffett Rule
     if (taxLaw.id === 'clinton') {
@@ -601,7 +609,7 @@ var taxCalculator = {
         )
       }
 
-      if (federalIncomeTax + employeePayrollTax < buffett && combinedIncome < 2000000) {
+      if (federalIncomeTax + employeePayrollTax < buffett && combinedIncome > 2000000) {
         federalIncomeTax = federalIncomeTax + (buffett - employeePayrollTax);
       }
     }
