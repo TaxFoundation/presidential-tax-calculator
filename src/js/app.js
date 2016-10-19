@@ -28,6 +28,7 @@ var app = {
       {
         name: 'Fed. Income Tax After Credits',
         id: 'federal-income-tax-after-credits',
+        class: 'tax-calculator-table__row--highlight',
       },
       {
         name: 'Employee Payroll Tax',
@@ -40,6 +41,7 @@ var app = {
       {
         name: 'Total Tax Burden',
         id: 'tax-burden',
+        class: 'tax-calculator-table__row--highlight',
       },
     ];
 
@@ -48,7 +50,11 @@ var app = {
     for (var i = 0, j = app.tableRows.length; i < j; i++) {
       var row = document.createElement('tr');
       row.id = app.tableRows[i].id;
-      row.className = 'tax-calculator-table__body-row';
+      row.classList.add('tax-calculator-table__body-row');
+      if (app.tableRows[i].class) {
+        row.classList.add('tax-calculator-table__row--highlight');
+      }
+
       document.getElementById('tax-results-body').appendChild(row);
       var label = document.createElement('td');
       label.className = 'tax-calculator-table__result-row-label';
