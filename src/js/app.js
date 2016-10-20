@@ -304,7 +304,7 @@ var app = {
       if(app.laws[plan].id === 'current') {
         changeCell.innerHTML = '--';
       } else {
-        changeCell.innerHTML = app.formatResult(planDifference);  
+        changeCell.innerHTML = app.formatResult(planDifference);
       }
 
 
@@ -661,7 +661,7 @@ var taxCalculator = {
       status,
       taxLaw
     );
-    var federalIncomeTax = (federalIncomeTax < 0 ? federalIncomeTax : Math.max(
+    var incomeTax = (federalIncomeTax < 0 ? federalIncomeTax : Math.max(
       federalIncomeTax,
       amt
     ));
@@ -675,15 +675,15 @@ var taxCalculator = {
         buffett = (
           combinedIncome * 0.3 *
           Math.min((combinedIncome - 1000000) / 1000000, 1)
-        )
+        );
       }
 
       if (federalIncomeTax + employeePayrollTax < buffett && combinedIncome > 2000000) {
-        federalIncomeTax = federalIncomeTax + (buffett - employeePayrollTax);
+        incomeTax = federalIncomeTax + (buffett - employeePayrollTax);
       }
     }
 
-    return federalIncomeTax;
+    return incomeTax;
   },
 };
 
