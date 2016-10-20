@@ -863,16 +863,16 @@ var taxLaws = [
         },
         {
           rate: 0.28,
-          income: 185400,
+          income: 186300,
         },
       ],
       single: {
-        exemption: 53600,
-        phaseout: 119200,
+        exemption: 53900,
+        phaseout: 119700,
       },
       married: {
-        exemption: 83400,
-        phaseout: 158900,
+        exemption: 83800,
+        phaseout: 159700,
       },
     },
   },
@@ -1051,16 +1051,16 @@ var taxLaws = [
         },
         {
           rate: 0.28,
-          income: 185400,
+          income: 186300,
         },
       ],
       single: {
-        exemption: 53600,
-        phaseout: 119200,
+        exemption: 53900,
+        phaseout: 119700,
       },
       married: {
-        exemption: 83400,
-        phaseout: 158900,
+        exemption: 83800,
+        phaseout: 159700,
       },
     },
   },
@@ -1199,7 +1199,7 @@ var taxLaws = [
       },
       phaseoutRate: 0.05,
     },
-    pepPease: {
+    pepPease: { // Not Used
       threshold: {
         single: 258250,
         married: 309900,
