@@ -347,7 +347,7 @@ var taxCalculator = {
         (
           1 -
           Math.ceil(
-            income - taxLaw.pepPease.threshold[status] / 2500
+            (income - taxLaw.pepPease.threshold[status]) / 2500
           ) *
           taxLaw.pepPease.phaseoutRate
         ) *
