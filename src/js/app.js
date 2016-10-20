@@ -7,6 +7,7 @@ var app = {
     this.childrenUnderFive = document.getElementById('children5');
     this.childcare = document.getElementById('childcare');
     this.married = document.getElementById('married');
+    this.currentBurden = 0;
 
     this.tableRows = [
       {
@@ -43,6 +44,11 @@ var app = {
         id: 'tax-burden',
         class: 'tax-calculator-table__row--highlight',
       },
+      {
+        name: 'Change',
+        id: 'change',
+        class: 'tax-calculator-table__row--change',
+      },
     ];
 
     this.laws = taxLaws;
@@ -52,7 +58,7 @@ var app = {
       row.id = app.tableRows[i].id;
       row.classList.add('tax-calculator-table__body-row');
       if (app.tableRows[i].class) {
-        row.classList.add('tax-calculator-table__row--highlight');
+        row.classList.add(app.tableRows[i].class);
       }
 
       document.getElementById('tax-results-body').appendChild(row);
@@ -212,6 +218,10 @@ var app = {
 
       var taxWedge = taxBurden + employerPayrollTax;
 
+      if (app.laws[plan].id === 'current') {
+        app.currentBurden = taxWedge;
+      }
+
       document.getElementById(
           app.laws[plan].id +
           '-taxable-income'
@@ -252,6 +262,20 @@ var app = {
           '-tax-burden'
         )
         .innerHTML = Math.round(taxWedge);
+
+      var planDifference = taxWedge - app.currentBurden;
+      var changeCell = document.getElementById(
+        app.laws[plan].id +
+          '-change'
+      );
+      changeCell.innerHTML = Math.round(planDifference);
+      if (planDifference > 0) {
+        changeCell.setAttribute('style', 'color: red');
+      } else if (planDifference < 0) {
+        changeCell.setAttribute('style', 'color: green');
+      } else {
+        changeCell.setAttribute('style', '');
+      }
     }
   },
 };
