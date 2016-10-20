@@ -14,7 +14,14 @@ style
         onclick='this.select()',
         oninput='app.calculate()'
       )
-    .tax-calculator__field
+    .tax-calculator__field   
+     label.tax-calculator__label(for='married') Are you married?   
+     input.tax-calculator__checkbox#married(   
+       name='married',   
+       type='checkbox',    
+       onchange='app.toggleMarriage()'    
+     )
+    .tax-calculator__field.tax-calculator__field--hidden#income2-field
       label.tax-calculator__label(for='income2') What is your spouse's income?
       input.tax-calculator__number-field#income2(
         name='income2',
@@ -23,13 +30,6 @@ style
         onclick='this.select()',
         oninput='app.calculate()'
       )
-    .tax-calculator__field   
-     label.tax-calculator__label(for='married') Are you married?   
-     input.tax-calculator__checkbox#married(   
-       name='married',   
-       type='checkbox',    
-       onchange='app.calculate()'    
-     )
     .tax-calculator__field   
      label.tax-calculator__label(for='deductions-tick') Will you itemize deductions?   
      input.tax-calculator__checkbox#deductions-tick(   
@@ -89,6 +89,6 @@ style
         th.tax-calculator-table__header Clinton
         th.tax-calculator-table__header Trump
     tbody.tax-calculator-table__body#tax-results-body
-
+  p.tax-calculator__notes NOTES: Calculator assumes that you only have wage income. Tax burden includes the impact of the federal individual income tax, the Child Tax Credit, the Earned Income Tax Credit, Employee- and Employer-side payroll taxes, the Alternative Minimum Tax, and the Medicare Surtax. Calculations are illustrative and should not be used for any tax filing purposes.
 script
   include ../dist/js/app.js

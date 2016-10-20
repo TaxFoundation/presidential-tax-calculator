@@ -83,7 +83,7 @@ var app = {
   },
 
   getBinaryStatus: function (income1, income2, children) {
-    if ((income1 > 0 && income2 > 0) || app.married.checked) {
+    if (app.married.checked) {
       return 'married';
     } else {
       return 'single';
@@ -91,7 +91,7 @@ var app = {
   },
 
   getTrinaryStatus: function (income1, income2, children) {
-    if ((income1 > 0 && income2 > 0) || app.married.checked) {
+    if (app.married.checked) {
       return 'married';
     } else if (children > 0) {
       return 'hoh';
@@ -118,6 +118,13 @@ var app = {
       document.getElementById('childrenUnderFiveSelected').innerHTML = maxChildren;
     }
 
+    if (maxChildren < 0) {
+      app.children.value = 0;
+      app.childcare.value = 0;
+    } else if (maxChildren == 0) {
+      app.childcare.value = 0;
+    }
+
     document.getElementById('children5max').innerHTML = maxChildren;
 
     app.childrenUnderFive.setAttribute('max', maxChildren);
@@ -133,6 +140,21 @@ var app = {
   toggleItemizedDeductions: function () {
     document.getElementById('deductions-field')
       .classList.toggle('tax-calculator__field--hidden');
+
+    if (!document.getElementById('deductions-tick').checked) {
+      app.deductions.value = 0;
+      app.calculate();
+    }
+  },
+
+  toggleMarriage: function () {
+    document.getElementById('income2-field')
+      .classList.toggle('tax-calculator__field--hidden');
+
+    if (!app.married.checked) {
+      app.income2.value = 0;
+      app.calculate();
+    }
   },
 
   calculate: function () {
