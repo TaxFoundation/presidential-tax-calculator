@@ -696,7 +696,7 @@ var taxLaws = [
       married: 12600,
       hoh: 9300,
     },
-    personalExemption: 4000,
+    personalExemption: 4050,
     brackets: [
       {
         rate: 0.1,
@@ -884,7 +884,7 @@ var taxLaws = [
       married: 12600,
       hoh: 9300,
     },
-    personalExemption: 4000,
+    personalExemption: 4050,
     brackets: [
       {
         rate: 0.1,
