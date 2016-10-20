@@ -694,7 +694,7 @@ var taxLaws = [
     standardDeuction: {
       single: 6300,
       married: 12600,
-      hoh: 9250,
+      hoh: 9300,
     },
     personalExemption: 4000,
     brackets: [
@@ -882,7 +882,7 @@ var taxLaws = [
     standardDeuction: {
       single: 6300,
       married: 12600,
-      hoh: 9250,
+      hoh: 9300,
     },
     personalExemption: 4000,
     brackets: [
