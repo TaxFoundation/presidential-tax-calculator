@@ -143,8 +143,9 @@ var app = {
 
     if (!document.getElementById('deductions-tick').checked) {
       app.deductions.value = 0;
-      app.calculate();
     }
+
+    app.calculate();
   },
 
   toggleMarriage: function () {
@@ -153,8 +154,9 @@ var app = {
 
     if (!app.married.checked) {
       app.income2.value = 0;
-      app.calculate();
     }
+
+    app.calculate();
   },
 
   formatResult: function (result) {
@@ -178,10 +180,6 @@ var app = {
     var childcareExpenses = isNaN(parseInt(app.childcare.value)) ? 0 : parseInt(app.childcare.value);
     var binaryStatus = app.getBinaryStatus(income1, income2, children);
     var trinaryStatus = app.getTrinaryStatus(income1, income2, children);
-
-    if (income1 > 0 && income2 > 0 && !app.married.checked) {
-      app.married.checked = true;
-    }
 
     for (var plan = 0, j = app.laws.length; plan < j; plan++) {
       var federalTaxableIncome = taxCalculator
