@@ -15,7 +15,7 @@ var app = {
         id: 'taxable-income',
       },
       {
-        name: 'Federal Income Tax',
+        name: 'Income Tax',
         id: 'federal-income-tax',
       },
       {
@@ -27,7 +27,7 @@ var app = {
         id: 'eitc',
       },
       {
-        name: 'Fed. Income Tax After Credits',
+        name: 'Income Tax After Credits and AMT',
         id: 'federal-income-tax-after-credits',
         class: 'tax-calculator-table__row--highlight',
       },
@@ -40,7 +40,7 @@ var app = {
         id: 'employer-payroll-tax',
       },
       {
-        name: 'Total Tax Burden',
+        name: 'Total Income and Payroll Tax Burden',
         id: 'tax-burden',
         class: 'tax-calculator-table__row--highlight',
       },
@@ -108,7 +108,7 @@ var app = {
     if (maxChildren > 0 && underFive.classList.contains('tax-calculator__field--hidden')) {
       underFive.classList.remove('tax-calculator__field--hidden');
       childcare.classList.remove('tax-calculator__field--hidden');
-    } else if (!underFive.classList.contains('tax-calculator__field--hidden')) {
+    } else if (maxChildren <= 0 && !underFive.classList.contains('tax-calculator__field--hidden')) {
       underFive.classList.add('tax-calculator__field--hidden');
       childcare.classList.add('tax-calculator__field--hidden');
     }
@@ -155,6 +155,18 @@ var app = {
       app.income2.value = 0;
       app.calculate();
     }
+  },
+
+  formatResult: function (result) {
+    var resultString = Math.round(Math.abs(result)).toLocaleString('en');
+    // TODO check for weird behavior in toLocaleString
+    if (result < 0) {
+      resultString = '-$' + resultString;
+    } else {
+      resultString = '$' + resultString;
+    }
+
+    return resultString;
   },
 
   calculate: function () {
@@ -248,49 +260,56 @@ var app = {
           app.laws[plan].id +
           '-taxable-income'
         )
-        .innerHTML = Math.round(federalTaxableIncome);
+        .innerHTML = app.formatResult(federalTaxableIncome);
       document.getElementById(
           app.laws[plan].id +
           '-federal-income-tax'
         )
-        .innerHTML = Math.round(federalIncomeTax);
+        .innerHTML = app.formatResult(federalIncomeTax);
       document.getElementById(
           app.laws[plan].id +
           '-ctc'
         )
-        .innerHTML = Math.round(childTaxCredit);
+        .innerHTML = app.formatResult(childTaxCredit);
       document.getElementById(
           app.laws[plan].id +
           '-eitc'
         )
-        .innerHTML = Math.round(eitc);
+        .innerHTML = app.formatResult(eitc);
       document.getElementById(
           app.laws[plan].id +
           '-federal-income-tax-after-credits'
         )
-        .innerHTML = Math.round(federalIncomeTaxAfterCredits);
+        .innerHTML = app.formatResult(federalIncomeTaxAfterCredits);
       document.getElementById(
           app.laws[plan].id +
           '-employee-payroll-tax'
         )
-        .innerHTML = Math.round(employeePayrollTax);
+        .innerHTML = app.formatResult(employeePayrollTax);
       document.getElementById(
           app.laws[plan].id +
           '-employer-payroll-tax'
         )
-        .innerHTML = Math.round(employerPayrollTax);
+        .innerHTML = app.formatResult(employerPayrollTax);
       document.getElementById(
           app.laws[plan].id +
           '-tax-burden'
         )
-        .innerHTML = Math.round(taxWedge);
+        .innerHTML = app.formatResult(taxWedge);
 
       var planDifference = taxWedge - app.currentBurden;
       var changeCell = document.getElementById(
         app.laws[plan].id +
           '-change'
       );
-      changeCell.innerHTML = Math.round(planDifference);
+
+      if(app.laws[plan].id === 'current') {
+        changeCell.innerHTML = '--';
+      } else {
+        changeCell.innerHTML = app.formatResult(planDifference);  
+      }
+
+
       if (planDifference > 0) {
         changeCell.setAttribute('style', 'color: red');
       } else if (planDifference < 0) {

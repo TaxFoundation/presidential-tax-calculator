@@ -77,9 +77,5 @@
     font-size: 16px;
     text-align: right;
     border-bottom: 1px solid #ededed;
-
-    &::before {
-      content: '$';
-    }
   }
 }
