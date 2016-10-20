@@ -121,7 +121,7 @@ var app = {
     if (maxChildren < 0) {
       app.children.value = 0;
       app.childcare.value = 0;
-    } else if (maxChildren == 0) {
+    } else if (maxChildren === 0) {
       app.childcare.value = 0;
     }
 
@@ -400,7 +400,7 @@ var taxCalculator = {
       if ((income1 + income2) > 250000 * statusSwitch) {
         childcare = Math.max(
           0,
-          (1 - 
+          (1 -
             (
               (income1 + income2) -
               (250000 * statusSwitch)
