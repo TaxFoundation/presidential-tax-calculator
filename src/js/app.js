@@ -849,9 +849,9 @@ var taxLaws = [
     },
     pepPease: {
       threshold: {
-        single: 258250,
-        married: 309900,
-        hoh: 284050,
+        single: 259400,
+        married: 311300,
+        hoh: 285350,
       },
       phaseoutRate: 0.02,
     },
@@ -1037,9 +1037,9 @@ var taxLaws = [
     },
     pepPease: {
       threshold: {
-        single: 258250,
-        married: 309900,
-        hoh: 284050,
+        single: 259400,
+        married: 311300,
+        hoh: 285350,
       },
       phaseoutRate: 0.02,
     },
