@@ -422,9 +422,7 @@ var taxCalculator = {
     var limit = 0;
     var federalIncomeTax = 0;
 
-    
-
-        // Plan-specific deduction calculations for Clinton
+    // Plan-specific deduction calculations for Clinton
     if (taxLaw.id === 'clinton') {
       // Assume 81% of deductions and healthcare of 11% or 30k
       var deductionLimit = itemizedDeductions * (1 - 0.19) +
@@ -484,7 +482,7 @@ var taxCalculator = {
           ((income1 + income2) - (15686.27 * statusSwitch)) * 0.0765
         );
       }
-    } 
+    }
 
     if (income < theEITC.threshold) {
       earnedIncomeTaxCredit = income *
