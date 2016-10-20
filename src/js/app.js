@@ -163,9 +163,9 @@ var app = {
     var resultString = Math.round(Math.abs(result)).toLocaleString('en');
     // TODO check for weird behavior in toLocaleString
     if (result < 0) {
-      resultString = '-$' + resultString;
+      resultString = '&minus;&#36;' + resultString;
     } else {
-      resultString = '$' + resultString;
+      resultString = '&#36;' + resultString;
     }
 
     return resultString;
