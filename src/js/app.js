@@ -511,11 +511,11 @@ var taxCalculator = {
       taxLaw
     ) {
     var income = income1 + income2;
-    var olderChildren = children;
+    var regularChildren = children;
     var childTaxCredit = 0;
 
     if (taxLaw.id === 'clinton') {
-      olderChildren = children - childrenUnderFive;
+      regularChildren = children - childrenUnderFive;
       if (childrenUnderFive > 0) {
         if (income <= 0) {
           childTaxCredit = 0;
@@ -526,40 +526,37 @@ var taxCalculator = {
             income * 0.45
           );
         } else if (income > taxLaw.ctc.phaseout[status]) {
-          childTaxCredit = Math.max(
-            0,
-            (taxLaw.ctc.credit * 2 * childrenUnderFive) -
-            (
-              Math.ceil(
-                (income - taxLaw.ctc.phaseout[status]) * 0.001
-              ) * 1000
-            ) * taxLaw.ctc.phaseoutRate
-          );
+          // Add double credits for children under five
+          childTaxCredit = taxLaw.ctc.credit * 2 * childrenUnderFive;
         }
       }
     }
 
-    if (olderChildren > 0) {
+    if (regularChildren > 0) {
       if (income <= taxLaw.ctc.phaseIn) {
         childTaxCredit += 0;
       } else if (income <= taxLaw.ctc.phaseout[status]) {
         childTaxCredit += Math.min(
           taxLaw.ctc.credit *
-          olderChildren,
+          regularChildren,
           (income - taxLaw.ctc.phaseIn) *
           taxLaw.ctc.phaseInRate
         );
       } else if (income > taxLaw.ctc.phaseout[status]) {
-        childTaxCredit += Math.max(
-          0,
-          (taxLaw.ctc.credit * olderChildren) -
-          (
-            Math.ceil(
-              (income - taxLaw.ctc.phaseout[status]) * 0.001
-            ) * 1000
-          ) * taxLaw.ctc.phaseoutRate
-        );
+        // Add single credits for children older than five, or all children if not Clinton
+        childTaxCredit += taxLaw.ctc.credit * regularChildren;
       }
+    }
+
+    // Calculate phaseout for combined CTC
+    if (income > taxLaw.ctc.phaseout[status]) {
+      childTaxCredit = Math.max(
+        0,
+        childTaxCredit -
+        (
+          Math.ceil((income - taxLaw.ctc.phaseout[status]) * 0.001) * 1000
+        ) * taxLaw.ctc.phaseoutRate
+      );
     }
 
     return taxCalculator.roundToHundredths(childTaxCredit);
